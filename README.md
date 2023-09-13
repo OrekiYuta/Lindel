@@ -7,3 +7,10 @@ Lindel is a Self Driver Wizard.
 - main wizard layout.
 - batch file quick boot.
 - sqlite3 store secret.
+
+
+## CMD
+```shell
+flet run wizard.py -d 
+
+```
