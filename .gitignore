@@ -1,3 +1,5 @@
 /venv/
 /.idea/
 /TODO.md
+/dist/
+/build/
