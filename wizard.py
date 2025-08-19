@@ -240,10 +240,8 @@ class ResponsiveMenuLayout(Row):
         return self.page.width > self.page.height
 
 
-if __name__ == "__main__":
-
+def start():
     def main(page: Page, title="Basic Responsive Menu"):
-
         page.title = title
 
         menu_button = IconButton(icons.MENU)
@@ -401,3 +399,7 @@ if __name__ == "__main__":
         menu.page.update()
 
     flet.app(target=main)
+
+
+if __name__ == "__main__":
+    start()
