@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Lindel",
+  "version": "0.0.1",
+  "permissions": ["scripting", "tabs", "storage"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html"
+}
