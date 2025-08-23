@@ -3,9 +3,20 @@
   "name": "Lindel",
   "version": "0.0.1",
   "permissions": ["tabs", "storage"],
-  "action": {},
+  "action": {
+    "default_icon": {
+      "32": "assets/img/202-wobbuffet.png",
+      "64": "assets/img/202-wobbuffet@2x.png",
+      "96": "assets/img/202-wobbuffet@3x.png"
+    }
+  },
   "options_page": "options.html",
   "background": {
     "service_worker": "background.js"
+  },
+  "icons": {
+    "32": "assets/img/202-wobbuffet.png",
+    "64": "assets/img/202-wobbuffet@2x.png",
+    "96": "assets/img/202-wobbuffet@3x.png"
   }
 }
