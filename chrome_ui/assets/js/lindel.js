@@ -38,5 +38,14 @@ $(document).ready(function() {
         }, {duration: 500, easing: "swing"});
     });
 
-    return false;
+    // -----------------------------
+    // ADD RANDOM SVG ICONS
+    // -----------------------------
+    $.getJSON("../assets/json/svg-icons.json", function(svgList) {
+    $(".random-icon").each(function() {
+            var randomSvg = svgList[Math.floor(Math.random() * svgList.length)];
+            $(this).html('<img src="../' + randomSvg + '" alt="icon" class="random-svg">');
+        });
+    });
+
 });

@@ -2,12 +2,15 @@
   "manifest_version": 3,
   "name": "Lindel",
   "version": "0.0.1",
-  "permissions": ["tabs", "storage"],
+  "permissions": [
+    "tabs",
+    "storage"
+  ],
   "action": {
     "default_icon": {
-      "32": "assets/img/202-wobbuffet.png",
-      "64": "assets/img/202-wobbuffet@2x.png",
-      "96": "assets/img/202-wobbuffet@3x.png"
+      "32": "assets/img/pokemon-icons/png/1x/202-wobbuffet.png",
+      "64": "assets/img/pokemon-icons/png/2x/202-wobbuffet@2x.png",
+      "96": "assets/img/pokemon-icons/png/3x/202-wobbuffet@3x.png"
     }
   },
   "options_page": "lindel.html",
@@ -15,8 +18,8 @@
     "service_worker": "background.js"
   },
   "icons": {
-    "32": "assets/img/202-wobbuffet.png",
-    "64": "assets/img/202-wobbuffet@2x.png",
-    "96": "assets/img/202-wobbuffet@3x.png"
+    "32": "assets/img/pokemon-icons/png/1x/202-wobbuffet.png",
+    "64": "assets/img/pokemon-icons/png/2x/202-wobbuffet@2x.png",
+    "96": "assets/img/pokemon-icons/png/3x/202-wobbuffet@3x.png"
   }
 }

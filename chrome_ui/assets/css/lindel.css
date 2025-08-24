@@ -1,0 +1,16 @@
+/* Random SVG icons */
+.random-icon .random-svg {
+    width: auto;
+    vertical-align: middle;
+    margin-right: 0.5em;
+}
+
+/* Sidebar menu icons (small) */
+#main-menu .random-icon .random-svg {
+    height: 1.5em;
+}
+
+/* Main content icons (larger) */
+.main-content .random-icon .random-svg {
+    height: 3em;
+}
