@@ -4,7 +4,8 @@
   "version": "0.0.1",
   "permissions": [
     "tabs",
-    "storage"
+    "storage",
+    "bookmarks"
   ],
   "action": {
     "default_icon": {

@@ -48,4 +48,15 @@ $(document).ready(function() {
         });
     });
 
+    // open page
+    $(document).on("click", ".xe-widget[data-page]", function() {
+      const page = $(this).data("page");
+      if (page) {
+        const url = chrome.runtime.getURL(page);
+        window.open(url, "_blank");
+      }
+    });
+
 });
+
+
