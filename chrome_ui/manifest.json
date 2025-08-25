@@ -2,7 +2,10 @@
   "manifest_version": 3,
   "name": "Lindel",
   "version": "0.0.1",
-  "permissions": ["tabs", "storage"],
+  "permissions": [
+    "tabs",
+    "storage"
+  ],
   "action": {
     "default_icon": {
       "32": "assets/img/202-wobbuffet.png",
@@ -18,5 +21,25 @@
     "32": "assets/img/202-wobbuffet.png",
     "64": "assets/img/202-wobbuffet@2x.png",
     "96": "assets/img/202-wobbuffet@3x.png"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://mops1-ct3.kb.southeastasia.azure.elastic-cloud.com:9243/*"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "panel.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
 }
