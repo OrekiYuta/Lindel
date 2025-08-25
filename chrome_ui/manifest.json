@@ -15,7 +15,7 @@
   },
   "options_page": "lindel.html",
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "assets/js/background.js"
   },
   "icons": {
     "32": "assets/img/202-wobbuffet.png",
@@ -28,14 +28,14 @@
         "https://mops1-ct3.kb.southeastasia.azure.elastic-cloud.com:9243/*"
       ],
       "js": [
-        "content.js"
+        "assets/js/content.js"
       ]
     }
   ],
   "web_accessible_resources": [
     {
       "resources": [
-        "panel.html"
+        "pages/panel.html"
       ],
       "matches": [
         "<all_urls>"

@@ -4,21 +4,34 @@
 
     const btn = document.createElement("button");
     btn.id = "lindel-float-btn";
-    btn.innerText = "Metric";
+    btn.innerText = "Mos";
 
+    const btnSize = 60;
     btn.style.position = "fixed";
-    btn.style.right = "20px";
+    btn.style.right = `-${btnSize / 2}px`;
     btn.style.bottom = "20px";
+    btn.style.width = `${btnSize}px`;
+    btn.style.height = `${btnSize}px`;
     btn.style.zIndex = "2147483647";
-    btn.style.padding = "18px 28px";
-    btn.style.background = "#ff5722";
+    btn.style.background = "#80d8ff";
     btn.style.color = "white";
     btn.style.border = "none";
-    btn.style.borderRadius = "50px";
+    btn.style.borderRadius = "50%";
     btn.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
     btn.style.cursor = "pointer";
-    btn.style.fontSize = "18px";
+    btn.style.fontSize = "16px";
     btn.style.fontWeight = "bold";
+    btn.style.display = "flex";
+    btn.style.alignItems = "center";
+    btn.style.justifyContent = "center";
+    btn.style.transition = "right 0.3s";
+
+    btn.addEventListener("mouseenter", () => {
+      btn.style.right = "20px";
+    });
+    btn.addEventListener("mouseleave", () => {
+      btn.style.right = `-${btnSize / 2}px`;
+    });
 
     let panel = document.getElementById("lindel-side-panel");
     if (!panel) {
@@ -37,7 +50,7 @@
       panel.style.borderLeft = "1px solid #ddd";
 
       const iframe = document.createElement("iframe");
-      iframe.src = chrome.runtime.getURL("panel.html");
+      iframe.src = chrome.runtime.getURL("pages/panel.html");
       iframe.style.width = "100%";
       iframe.style.height = "100%";
       iframe.style.border = "none";
