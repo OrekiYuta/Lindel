@@ -18,9 +18,9 @@
     "service_worker": "assets/js/background.js"
   },
   "icons": {
-    "32": "assets/img/202-wobbuffet.png",
-    "64": "assets/img/202-wobbuffet@2x.png",
-    "96": "assets/img/202-wobbuffet@3x.png"
+    "32": "assets/img/pokemon-icons/png/1x/202-wobbuffet.png",
+    "64": "assets/img/pokemon-icons/png/2x/202-wobbuffet@2x.png",
+    "96": "assets/img/pokemon-icons/png/3x/202-wobbuffet@3x.png"
   },
   "content_scripts": [
     {
@@ -42,8 +42,4 @@
       ]
     }
   ]
-    "32": "assets/img/pokemon-icons/png/1x/202-wobbuffet.png",
-    "64": "assets/img/pokemon-icons/png/2x/202-wobbuffet@2x.png",
-    "96": "assets/img/pokemon-icons/png/3x/202-wobbuffet@3x.png"
-  }
 }
