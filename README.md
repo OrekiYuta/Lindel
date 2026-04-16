@@ -1,28 +1,6 @@
-# Lindel
+## Introduction
 
-Lindel is a Self Driver Wizard.
+Lindel is a Chrome extension designed as a personal utility dashboard.  
+It brings together everyday automation helpers and quick-access tools in one place, so routine tasks can be handled faster and with less friction.
 
-## Road Map
-
-- main wizard layout.
-- batch file quick boot.
-- sqlite3 store secret.
-
-## UI-Road
-
-- flutter: flet
-- webview/chromium: pending...
-
-## CMD
-
-```shell
-flet run wizard.py -d 
-flet pack wizard.py 
-```
-
-```shell
-pipreqs . --encoding UTF-8 --force
-pip install -r requirements.txt
-```
-
-
+Built for personal productivity, Lindel focuses on convenience, simplicity, and a centralized workflow for commonly used actions.
