@@ -70,3 +70,22 @@
 .sidebar-menu.collapsed #main-menu > li > a > .label {
   display: none !important;
 }
+
+/* Go-top button styles */
+.go-up .go-top-icon {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.go-up a[rel="go-top"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Keep go-top icon background transparent (override theme defaults) */
+footer.main-footer .go-up a[rel="go-top"],
+footer.main-footer .go-up a[rel="go-top"]:hover {
+  background-color: transparent;
+}
