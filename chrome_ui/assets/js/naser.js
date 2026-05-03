@@ -632,7 +632,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const groups = buildGroups(allTiles);
-      const preferredGroup = groups.find((group) => group.id === "main");
+      const preferredGroup = groups.find((group) => group.id === NASER_ALL_GROUP_ID);
       let currentGroup = preferredGroup || groups[0];
       const folderIconMap = buildFolderIconMap(groups, Array.isArray(svgList) ? svgList : []);
       const statusCache = loadStatusCache();
