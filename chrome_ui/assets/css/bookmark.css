@@ -210,17 +210,37 @@
 
 .bookmark-site-icon {
   float: left;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 34px;
   height: 34px;
   border-radius: 50%;
   text-align: center;
   line-height: 34px;
   background: #f1f6fc;
+  overflow: hidden;
 }
 
 .bookmark-site-icon i {
   color: #68b828;
   font-size: 14px;
+}
+
+.bookmark-site-favicon {
+  display: none;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.bookmark-site-favicon.is-ready {
+  display: block;
+}
+
+.bookmark-site-icon-fallback.is-hidden {
+  display: none;
 }
 
 .bookmark-empty {

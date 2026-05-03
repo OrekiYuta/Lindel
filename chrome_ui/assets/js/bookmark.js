@@ -163,6 +163,53 @@ function setTotalCount(count) {
   }
 }
 
+function getBookmarkFaviconUrl(pageUrl) {
+  if (!pageUrl) return "";
+  return chrome.runtime.getURL(
+    `_favicon/?pageUrl=${encodeURIComponent(pageUrl)}&size=32`
+  );
+}
+
+function createBookmarkSiteIcon(pageUrl, title) {
+  const iconWrap = document.createElement("span");
+  iconWrap.className = "bookmark-site-icon";
+
+  const fallbackIcon = document.createElement("i");
+  fallbackIcon.className = "fa fa-bookmark bookmark-site-icon-fallback";
+  fallbackIcon.setAttribute("aria-hidden", "true");
+
+  const faviconUrl = getBookmarkFaviconUrl(pageUrl);
+  if (!faviconUrl) {
+    iconWrap.appendChild(fallbackIcon);
+    return iconWrap;
+  }
+
+  const faviconImg = document.createElement("img");
+  faviconImg.className = "bookmark-site-favicon";
+  faviconImg.src = faviconUrl;
+  faviconImg.alt = title || "Site icon";
+  faviconImg.width = 18;
+  faviconImg.height = 18;
+  faviconImg.loading = "lazy";
+
+  faviconImg.addEventListener("error", () => {
+    faviconImg.remove();
+    if (!iconWrap.querySelector(".bookmark-site-icon-fallback")) {
+      iconWrap.appendChild(fallbackIcon);
+    }
+  });
+
+  iconWrap.appendChild(faviconImg);
+  iconWrap.appendChild(fallbackIcon);
+
+  faviconImg.addEventListener("load", () => {
+    faviconImg.classList.add("is-ready");
+    fallbackIcon.classList.add("is-hidden");
+  });
+
+  return iconWrap;
+}
+
 function renderBookmarkCards(folderNode) {
   const container = document.getElementById("bookmarks");
   container.innerHTML = "";
@@ -202,9 +249,7 @@ function renderBookmarkCards(folderNode) {
     const entry = document.createElement("div");
     entry.className = "xe-comment-entry";
 
-    const iconWrap = document.createElement("span");
-    iconWrap.className = "bookmark-site-icon";
-    iconWrap.innerHTML = '<i class="fa fa-bookmark"></i>';
+    const iconWrap = createBookmarkSiteIcon(node.url, node.title || node.url);
 
     const comment = document.createElement("div");
     comment.className = "xe-comment";
