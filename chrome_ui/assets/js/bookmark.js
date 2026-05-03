@@ -72,9 +72,43 @@ function renderBookmarkCards(folderNode) {
   });
 }
 
+function pickBookmarkBarNode(bookmarkTreeNodes) {
+  const root = Array.isArray(bookmarkTreeNodes) ? bookmarkTreeNodes[0] : null;
+  if (!root || !Array.isArray(root.children)) return null;
+
+  // Chrome 通常把书签栏固定为 id=1
+  let bar = root.children.find((n) => n && n.id === "1");
+
+  // 本地化标题兜底
+  if (!bar) {
+    bar = root.children.find(
+      (n) =>
+        n &&
+        typeof n.title === "string" &&
+        ["书签栏", "Bookmarks bar", "Bookmark bar"].includes(n.title.trim())
+    );
+  }
+
+  // 最后兜底：第一个可用目录
+  if (!bar) {
+    bar = root.children.find((n) => n && Array.isArray(n.children));
+  }
+
+  return bar || null;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   chrome.bookmarks.getTree((bookmarkTreeNodes) => {
-    // 默认选中第一个可用文件夹
+    const bookmarkBarNode = pickBookmarkBarNode(bookmarkTreeNodes);
+
+    if (!bookmarkBarNode || !Array.isArray(bookmarkBarNode.children)) {
+      document.getElementById("folders").innerHTML = "";
+      document.getElementById("bookmarks").innerHTML = "";
+      document.getElementById("current-folder-title").textContent = "我的书签";
+      return;
+    }
+
+    // 默认选中书签栏中的第一个可用文件夹
     function findFirstFolder(node) {
       if (node.children && node.children.length) return node;
       if (node.children) {
@@ -86,17 +120,18 @@ document.addEventListener("DOMContentLoaded", () => {
       return node;
     }
 
-    let currentFolder = findFirstFolder(bookmarkTreeNodes[0]);
+    let currentFolder = findFirstFolder(bookmarkBarNode);
 
-    // 默认全部折叠；只展开当前路径可选（这里先保持全折叠）
+    // 默认全部折叠
     const expandedSet = new Set();
 
     function renderSidebar() {
       const foldersUl = document.getElementById("folders");
       foldersUl.innerHTML = "";
 
+      // 只渲染书签栏下的内容
       renderFolderTree(
-        bookmarkTreeNodes,
+        bookmarkBarNode.children,
         foldersUl,
         (node, onlyRefreshSidebar) => {
           if (!onlyRefreshSidebar && node) {
