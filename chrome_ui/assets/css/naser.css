@@ -1,41 +1,42 @@
-.bookmark-page {
-  background: #f9fbfd;
-  --bookmark-sidebar-width: 280px;
+
+.naser-page {
+  background: linear-gradient(180deg, #f6fbf7 0%, #eef6f0 100%);
+  --naser-sidebar-width: 280px;
 }
 
-.bookmark-sidebar-wrap {
+.naser-sidebar-wrap {
   position: relative;
 }
 
-.bookmark-sidebar-wrap:not(.collapsed) {
-  width: var(--bookmark-sidebar-width) !important;
+.naser-sidebar-wrap:not(.collapsed) {
+  width: var(--naser-sidebar-width) !important;
 }
 
-.bookmark-sidebar-wrap:not(.collapsed) + .bookmark-main-content {
-  margin-left: var(--bookmark-sidebar-width) !important;
+.naser-sidebar-wrap:not(.collapsed) + .naser-main-content {
+  margin-left: var(--naser-sidebar-width) !important;
 }
 
-.bookmark-logo-text {
-  color: #96e56f;
+.naser-logo-text {
+  color: #76d06a;
   font-size: 20px;
   font-weight: 700;
   letter-spacing: 0.2px;
 }
 
-.bookmark-logo-collapsed {
+.naser-logo-collapsed {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 38px;
   height: 38px;
   border-radius: 12px;
-  color: #96e56f;
-  background: rgba(150, 229, 111, 0.1);
-  border: 1px solid rgba(150, 229, 111, 0.2);
+  color: #76d06a;
+  background: rgba(118, 208, 106, 0.12);
+  border: 1px solid rgba(118, 208, 106, 0.25);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
 }
 
-.bookmark-logo-collapsed i {
+.naser-logo-collapsed i {
   font-size: 16px;
 }
 
@@ -55,7 +56,7 @@
   min-height: 44px;
   padding: 12px 18px;
   line-height: 1.35;
-  font-size: 13px !important;
+  font-size: 13px;
   border-left: 3px solid transparent;
 }
 
@@ -81,7 +82,7 @@
 #folders .folder-title.active {
   color: #fff;
   background-color: #2c2e2f;
-  border-left-color: #68b828;
+  border-left-color: #76d06a;
 }
 
 #folders .folder-title .title {
@@ -89,7 +90,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 
 #folders .folder-arrow {
   margin-left: auto;
@@ -109,12 +109,12 @@
 }
 
 #folders .folder-tree .folder-title {
-  font-size: 13px !important;
+  font-size: 13px;
   min-height: 40px;
   padding: 10px 18px;
 }
 
-#folders .bookmark-folder-meta {
+.naser-folder-meta {
   margin-left: auto;
   min-width: 22px;
   padding: 1px 7px;
@@ -127,42 +127,41 @@
   border-radius: 999px;
 }
 
-#folders .folder-title.active .bookmark-folder-meta,
-#folders .folder-title:hover .bookmark-folder-meta {
+#folders .folder-title.active .naser-folder-meta,
+#folders .folder-title:hover .naser-folder-meta {
   color: #f3fff1;
   background: rgba(118, 208, 106, 0.26);
   border-color: rgba(118, 208, 106, 0.34);
 }
 
-/* Hide floating submenus in collapsed mode to avoid covering main content. */
-.bookmark-page .sidebar-menu.collapsed #folders.main-menu > li > ul,
-.bookmark-page .sidebar-menu.collapsed #folders.main-menu > li:hover > ul {
+.naser-page .sidebar-menu.collapsed #folders.main-menu > li > ul,
+.naser-page .sidebar-menu.collapsed #folders.main-menu > li:hover > ul {
   display: none !important;
 }
 
-.bookmark-page .sidebar-menu.collapsed .logo-env {
+.naser-page .sidebar-menu.collapsed .logo-env {
   padding-left: 0;
   padding-right: 0;
 }
 
-.bookmark-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title {
+.naser-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title {
   justify-content: center;
   padding-left: 0;
   padding-right: 0;
   border-left-color: transparent;
 }
 
-.bookmark-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title > .random-icon {
+.naser-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title > .random-icon {
   display: inline-flex !important;
 }
 
-.bookmark-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title > .title,
-.bookmark-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title > .folder-arrow,
-.bookmark-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title > .bookmark-folder-meta {
+.naser-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title > .title,
+.naser-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title > .folder-arrow,
+.naser-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title > .naser-folder-meta {
   display: none !important;
 }
 
-.bookmark-sidebar-resizer {
+.naser-sidebar-resizer {
   position: absolute;
   top: 0;
   right: -3px;
@@ -172,17 +171,17 @@
   z-index: 5;
 }
 
-.bookmark-resizing,
-.bookmark-resizing * {
+.naser-resizing,
+.naser-resizing * {
   user-select: none;
   cursor: col-resize !important;
 }
 
-.bookmark-main-content {
+.naser-main-content {
   padding-bottom: 18px;
 }
 
-.user-info-navbar .user-info-menu > li.bookmark-title-item {
+.user-info-navbar .user-info-menu > li.naser-title-item {
   display: flex;
   align-items: center;
   min-height: 75px;
@@ -191,19 +190,19 @@
   border-right: 0;
 }
 
-.user-info-navbar .user-info-menu > li.bookmark-title-item .bookmark-page-title {
+.user-info-navbar .user-info-menu > li.naser-title-item .naser-page-title {
   margin: 0;
   line-height: 1.25;
 }
 
-.bookmark-page-title {
+.naser-page-title {
   display: inline-flex;
   align-items: center;
   gap: 7px;
   margin: 0;
 }
 
-.bookmark-count {
+.naser-count {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -216,53 +215,53 @@
   box-shadow: 0 1px 2px rgba(17, 24, 39, 0.06);
 }
 
-.bookmark-count-item {
+.naser-count-item {
   display: flex;
   align-items: center;
   min-height: 75px;
 }
 
-.bookmark-stats {
+.naser-stats {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.bookmark-count-total {
+.naser-count-total {
   color: #25538a;
   border-color: #d3e3f7;
   background: linear-gradient(180deg, #f7fbff 0%, #ebf4ff 100%);
 }
 
-.bookmark-count-current {
+.naser-count-current {
   color: #2c6b1f;
   border-color: #d0e8c8;
   background: linear-gradient(180deg, #f5fcf1 0%, #e7f6df 100%);
 }
 
-.bookmark-count-reachable {
+.naser-count-reachable {
   color: #1b7b44;
   border-color: #c9ead8;
   background: linear-gradient(180deg, #f3fcf7 0%, #ddf4e6 100%);
 }
 
-.bookmark-count-unavailable {
+.naser-count-unavailable {
   color: #5f6b79;
   border-color: #d5dde7;
   background: linear-gradient(180deg, #f8f9fb 0%, #edf1f5 100%);
 }
 
-.bookmark-count i {
+.naser-count i {
   font-size: 12px;
   opacity: 0.85;
 }
 
-.bookmark-count-label {
+.naser-count-label {
   color: inherit;
   opacity: 0.92;
 }
 
-.bookmark-count-value {
+.naser-count-value {
   min-width: 26px;
   padding: 1px 8px;
   text-align: center;
@@ -273,24 +272,40 @@
   border: 1px solid rgba(255, 255, 255, 0.92);
 }
 
-.bookmark-card-list {
+.naser-card-list {
   margin-top: 2px;
 }
 
-.bookmark-card {
+.naser-card {
   position: relative;
   height: 96px;
   margin-top: 16px;
   overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
-.bookmark-card .xe-comment-entry {
+.naser-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(41, 58, 74, 0.08);
+}
+
+.naser-card .xe-comment-entry {
   position: relative;
   min-height: 64px;
-  padding-top: 10px;
+  padding-top: 14px;
 }
 
-.bookmark-card-status-bar {
+.naser-card .xe-comment {
+  margin-left: 0;
+  color: inherit;
+}
+
+.naser-card .xe-user-name,
+.naser-card .overflowClip_2 {
+  color: inherit;
+}
+
+.naser-card-status-bar {
   position: absolute;
   top: 0;
   left: 0;
@@ -301,65 +316,29 @@
   background: linear-gradient(90deg, #d9e1ec 0%, #e7edf5 100%);
 }
 
-.bookmark-card-status-reachable .bookmark-card-status-bar {
+.naser-card-status-reachable .naser-card-status-bar {
   background: linear-gradient(90deg, #4caf50 0%, #7bd57e 100%);
 }
 
-.bookmark-card-status-unavailable .bookmark-card-status-bar {
+.naser-card-status-unavailable .naser-card-status-bar {
   background: linear-gradient(90deg, #9aa4b2 0%, #c5ccd6 100%);
 }
 
-.bookmark-card-status-unavailable {
+.naser-card-status-unavailable {
   box-shadow: inset 0 0 0 1px #e5eaf1;
 }
 
-.bookmark-card-status-unavailable .xe-user-name strong,
-.bookmark-card-status-unavailable .overflowClip_2 {
+.naser-card-status-unavailable .xe-user-name strong,
+.naser-card-status-unavailable .overflowClip_2 {
   color: #7c8795;
 }
 
-.bookmark-site-icon {
-  float: left;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 34px;
-  background: #f1f6fc;
-  overflow: hidden;
-}
-
-.bookmark-site-icon i {
-  color: #68b828;
-  font-size: 14px;
-}
-
-.bookmark-site-favicon {
-  display: none;
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-  border-radius: 4px;
-}
-
-.bookmark-site-favicon.is-ready {
-  display: block;
-}
-
-.bookmark-site-icon-fallback.is-hidden {
-  display: none;
-}
-
-.bookmark-empty {
+.naser-empty {
   margin-top: 20px;
   padding: 26px 16px;
   text-align: center;
-  color: #9da9b5;
-  border: 1px dashed #dbe5ef;
+  color: #81909d;
+  border: 1px dashed #d7e5d7;
   border-radius: 6px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
 }
-

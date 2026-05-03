@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lindel - Little Root Town</title>
+  <link rel="stylesheet" href="../assets/css/fonts/linecons/css/linecons.css" />
+  <link rel="stylesheet" href="../assets/css/fonts/fontawesome/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="../assets/css/bootstrap.css" />
+  <link rel="stylesheet" href="../assets/css/xenon-core.css" />
+  <link rel="stylesheet" href="../assets/css/xenon-components.css" />
+  <link rel="stylesheet" href="../assets/css/xenon-skins.css" />
+  <link rel="stylesheet" href="../assets/css/nav.css" />
+  <link rel="stylesheet" href="../assets/css/naser.css" />
+  <script src="../assets/js/jquery-3.7.1.min.js"></script>
+</head>
+<body class="page-body naser-page">
+  <div class="page-container">
+    <div class="sidebar-menu toggle-others fixed naser-sidebar-wrap">
+      <div class="sidebar-menu-inner">
+        <header class="logo-env">
+          <div class="logo">
+            <a href="#" class="logo-expanded">
+              <span class="naser-logo-text">Little Root Town</span>
+            </a>
+            <a href="#" class="logo-collapsed" aria-label="Little Root Town">
+              <span class="naser-logo-collapsed">
+                <i class="fa fa-sitemap"></i>
+              </span>
+            </a>
+          </div>
+          <div class="mobile-menu-toggle visible-xs">
+            <a href="#" data-toggle="user-info-menu">
+              <i class="linecons-cog"></i>
+            </a>
+            <a href="#" data-toggle="mobile-menu">
+              <i class="fa-bars"></i>
+            </a>
+          </div>
+        </header>
+
+        <ul id="folders" class="main-menu"></ul>
+      </div>
+      <div class="naser-sidebar-resizer" aria-hidden="true"></div>
+    </div>
+
+    <div class="main-content naser-main-content">
+      <nav class="navbar user-info-navbar" role="navigation">
+        <ul class="user-info-menu left-links list-inline list-unstyled">
+          <li class="hidden-sm hidden-xs">
+            <a href="#" data-toggle="sidebar">
+              <i class="fa-bars"></i>
+            </a>
+          </li>
+          <li class="naser-title-item">
+            <h4 class="text-gray naser-page-title">
+              <i class="linecons-tag"></i>
+              <span id="current-folder-title">Little Root Town</span>
+            </h4>
+          </li>
+        </ul>
+        <ul class="user-info-menu right-links list-inline list-unstyled naser-stats">
+          <li class="naser-count-item">
+            <span class="naser-count naser-count-total">
+              <i class="fa fa-globe"></i>
+              <span class="naser-count-label">Total</span>
+              <strong id="naser-total-value" class="naser-count-value">0</strong>
+            </span>
+          </li>
+          <li class="naser-count-item">
+            <span class="naser-count naser-count-reachable">
+              <i class="fa fa-check-circle"></i>
+              <span class="naser-count-label">Reachable</span>
+              <strong id="naser-reachable-value" class="naser-count-value">0</strong>
+            </span>
+          </li>
+          <li class="naser-count-item">
+            <span class="naser-count naser-count-unavailable">
+              <i class="fa fa-chain-broken"></i>
+              <span class="naser-count-label">Unavailable</span>
+              <strong id="naser-unavailable-value" class="naser-count-value">0</strong>
+            </span>
+          </li>
+          <li class="naser-count-item">
+            <span class="naser-count naser-count-current">
+              <i class="fa fa-folder-open"></i>
+              <span class="naser-count-label">Current Group</span>
+              <strong id="naser-current-value" class="naser-count-value">0</strong>
+            </span>
+          </li>
+        </ul>
+      </nav>
+
+      <div id="bookmarks" class="row naser-card-list"></div>
+    </div>
+  </div>
+
+  <script src="../assets/js/bootstrap.min.js"></script>
+  <script src="../assets/js/TweenMax.min.js"></script>
+  <script src="../assets/js/resizeable.js"></script>
+  <script src="../assets/js/joinable.js"></script>
+  <script src="../assets/js/xenon-api.js"></script>
+  <script src="../assets/js/xenon-toggles.js"></script>
+  <script src="../assets/js/xenon-custom.js"></script>
+  <script src="../assets/js/naser.js"></script>
+</body>
+</html>
+

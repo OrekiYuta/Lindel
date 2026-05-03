@@ -46,6 +46,14 @@ function pickFolderIconPath(node, folderIconMap) {
   return folderIconMap.get(getFolderIconKey(node)) || "";
 }
 
+function countDirectBookmarks(node) {
+  if (!node || !Array.isArray(node.children)) return 0;
+  return node.children.reduce((sum, child) => {
+    if (child?.url) return sum + 1;
+    return sum + countDirectBookmarks(child);
+  }, 0);
+}
+
 function renderFolderTree(
   nodes,
   parentUl,
@@ -96,6 +104,11 @@ function renderFolderTree(
     text.className = "title";
     text.textContent = node.title || "Untitled Folder";
     titleLink.appendChild(text);
+
+    const meta = document.createElement("span");
+    meta.className = "bookmark-folder-meta";
+    meta.textContent = String(countDirectBookmarks(node));
+    titleLink.appendChild(meta);
 
     titleLink.appendChild(arrow);
 
