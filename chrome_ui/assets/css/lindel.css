@@ -14,3 +14,10 @@
 .main-content .random-icon .random-svg {
     height: 3em;
 }
+
+.logo-text {
+  color: #96e56f;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
