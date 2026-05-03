@@ -3,16 +3,137 @@
 <head>
   <meta charset="UTF-8" />
   <title>Bookmarks</title>
+  <link rel="stylesheet" href="../assets/css/lindel.css" />
   <style>
-    body { font-family: Arial, sans-serif; padding: 10px; }
-    ul { list-style: none; padding-left: 20px; }
-    li { margin: 4px 0; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      background: #f4f6f8;
+    }
+
+    .sidebar {
+      width: 260px;
+      border-right: 1px solid #e0e0e0;
+      background: #fff;
+      padding: 20px 10px 10px 20px;
+      overflow-y: auto;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.03);
+    }
+
+    .sidebar h3 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 16px;
+    }
+
+    .folder-tree {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .folder-node {
+      margin-bottom: 4px;
+    }
+
+    .folder-title {
+      cursor: pointer;
+      font-weight: 500;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      transition: background 0.2s;
+      user-select: none;
+    }
+
+    .folder-title:hover, .folder-title.active {
+      background: #e3eafc;
+      color: #2563eb;
+    }
+
+    .folder-arrow {
+      font-size: 12px;
+      margin-right: 6px;
+      transition: transform 0.2s;
+      display: inline-block;
+      width: 16px;
+      text-align: center;
+    }
+
+    .folder-arrow.collapsed {
+      transform: rotate(-90deg);
+    }
+
+    .content {
+      flex: 1;
+      padding: 32px 40px;
+      overflow-y: auto;
+    }
+
+    .content h2 {
+      margin-top: 0;
+      font-size: 22px;
+      color: #222;
+      margin-bottom: 18px;
+    }
+
+    .bookmark-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+
+    .bookmark-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      padding: 18px 20px;
+      min-width: 220px;
+      max-width: 260px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: box-shadow 0.2s;
+    }
+
+    .bookmark-card:hover {
+      box-shadow: 0 4px 16px rgba(37,99,235,0.10);
+      border-color: #2563eb;
+    }
+
+    .bookmark-card a {
+      color: #2563eb;
+      font-size: 16px;
+      font-weight: 500;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .bookmark-card a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-  <h2>My Bookmarks</h2>
-  <div id="bookmarks"></div>
-
+  <div class="sidebar">
+    <h3>书签目录</h3>
+    <ul id="folders" class="folder-tree">
+      <!-- Folders will be dynamically populated here -->
+    </ul>
+  </div>
+  <div class="content">
+    <h2 id="current-folder-title">我的书签</h2>
+    <div id="bookmarks" class="bookmark-list">
+      <!-- Bookmarks will be dynamically populated here -->
+    </div>
+  </div>
   <script src="../assets/js/bookmark.js"></script>
 </body>
 </html>
