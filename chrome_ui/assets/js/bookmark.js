@@ -4,10 +4,15 @@ const BOOKMARK_STATUS_REACHABLE = "reachable";
 const BOOKMARK_STATUS_UNAVAILABLE = "unavailable";
 const BOOKMARK_STATUS_CACHE_KEY = "bookmarkStatusCache";
 const BOOKMARK_CHECK_CONCURRENCY = 6;
+// Timeout for a single bookmark availability request: 8 seconds.
 const BOOKMARK_CHECK_TIMEOUT_MS = 8000;
+// Cache reachable bookmark results for 24 hours.
 const BOOKMARK_STATUS_CACHE_TTL_REACHABLE_MS = 24 * 60 * 60 * 1000;
+// Cache unavailable bookmark results for 30 minutes.
 const BOOKMARK_STATUS_CACHE_TTL_UNAVAILABLE_MS = 30 * 60 * 1000;
+// Debounce localStorage writes to avoid persisting too frequently.
 const BOOKMARK_STATUS_CACHE_SAVE_DEBOUNCE_MS = 300;
+// Keep at most 5000 recent bookmark status cache entries.
 const BOOKMARK_STATUS_CACHE_MAX_ENTRIES = 5000;
 
 let bookmarkStatusCacheSaveTimer = null;
