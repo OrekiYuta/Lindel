@@ -17,6 +17,8 @@
     <script src="assets/js/jquery-3.7.1.min.js"></script>
 
 
+</head>
+
 <body class="page-body">
 <!-- skin-white -->
 <div class="page-container">
@@ -42,41 +44,7 @@
                     </a>
                 </div>
             </header>
-            <ul id="main-menu" class="main-menu">
-                <li>
-                    <a href="#Common" class="smooth">
-                        <span class="random-icon"></span> <!-- placeholder -->
-                        <span class="title">Common</span>
-                        <span class="label label-pink pull-right hidden-collapsed">PIN</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#LAN" class="smooth">
-                        <span class="random-icon"></span> <!-- placeholder -->
-                        <span class="title">LAN</span>
-                    </a>
-                </li>
-                <li>
-                    <a>
-                        <span class="random-icon"></span> <!-- placeholder -->
-                        <span class="title">WAN</span>
-                    </a>
-                    <ul>
-                        <li>
-                            <a href="#Work" class="smooth">
-                                <span class="random-icon"></span>
-                                <span class="title">Work</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#Self" class="smooth">
-                                <span class="random-icon"></span>
-                                <span class="title">Self</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+            <ul id="main-menu" class="main-menu"></ul>
 
         </div>
     </div>
@@ -111,135 +79,7 @@
             </ul>
 
         </nav>
-
-        <h4 class="text-gray"><i class="linecons-tag" style="margin-right: 7px;" id="Common"></i>Common</h4>
-        <div class="row">
-            <div class="col-sm-3">
-                <div class="xe-widget xe-conversations box2 label-info"
-                     data-page="pages/bookmark.html"
-                     data-toggle="tooltip"
-                     data-placement="bottom"
-                     title=""
-                     data-original-title="#">
-                    <div class="xe-comment-entry">
-                        <span class="random-icon" data-icon="assets/img/custom-icons/chrome.png"></span>
-                        <div class="xe-comment">
-                            <a href="#" class="xe-user-name overflowClip_1">
-                                <strong>Bookmark Manager</strong>
-                            </a>
-                            <p class="overflowClip_2">Chrome Bookmark Displayer</p>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-3">
-                <div class="xe-widget xe-conversations box2 label-info"
-                     data-page="pages/naser.html"
-                     data-toggle="tooltip"
-                     data-placement="bottom" title="" data-original-title="#">
-                    <div class="xe-comment-entry">
-                        <span class="random-icon" data-icon="assets/img/custom-icons/naser.svg"></span>
-                        <div class="xe-comment">
-                            <a href="#" class="xe-user-name overflowClip_1">
-                                <strong>Little Root Town</strong>
-                            </a>
-                            <p class="overflowClip_2">Homelab Navigator</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-sm-3">
-                <div class="xe-widget xe-conversations box2 label-info"
-                     data-url="https://c24s.orekiyuta.cn/"
-                     data-toggle="tooltip"
-                     data-placement="bottom"
-                     title=""
-                     data-original-title="https://c24s.orekiyuta.cn/">
-                    <div class="xe-comment-entry">
-                        <span class="random-icon" data-icon="assets/img/custom-icons/c24s.svg"></span>
-                        <div class="xe-comment">
-                            <a href="#" class="xe-user-name overflowClip_1">
-                                <strong>c24s</strong>
-                            </a>
-                            <p class="overflowClip_2">Elias Lab</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <br/>
-
-        <h4 class="text-gray"><i class="linecons-tag" style="margin-right: 7px;" id="LAN"></i>LAN</h4>
-        <div class="row">
-            <div class="col-sm-3">
-                <div class="xe-widget xe-conversations box2 label-info"
-                     onclick="window.open('#', '_blank')" data-toggle="tooltip"
-                     data-placement="bottom" title="" data-original-title="#">
-                    <div class="xe-comment-entry">
-                        <span class="random-icon"></span>
-                        <div class="xe-comment">
-                            <a href="#" class="xe-user-name overflowClip_1">
-                                <strong>Lindel</strong>
-                            </a>
-                            <p class="overflowClip_2">Lindel description</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <br/>
-
-        <h4 class="text-gray"><i class="linecons-tag" style="margin-right: 7px;" id="Work"></i>Work</h4>
-        <div class="row">
-            <div class="col-sm-3">
-                <div class="xe-widget xe-conversations box2 label-info"
-                     onclick="window.open('#', '_blank')" data-toggle="tooltip"
-                     data-placement="bottom" title="" data-original-title="#">
-                    <div class="xe-comment-entry">
-                        <span class="random-icon"></span>
-                        <div class="xe-comment">
-                            <a href="#" class="xe-user-name overflowClip_1">
-                                <strong>Lindel</strong>
-                            </a>
-                            <p class="overflowClip_2">Lindel description</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <br/>
-
-        <h4 class="text-gray"><i class="linecons-tag" style="margin-right: 7px;" id="Self"></i>Self
-        </h4>
-        <div class="row">
-            <div class="col-sm-3">
-                <div class="xe-widget xe-conversations box2 label-info"
-                     onclick="window.open('#', '_blank')" data-toggle="tooltip"
-                     data-placement="bottom" title="" data-original-title="#">
-                    <div class="xe-comment-entry">
-                        <span class="random-icon"></span>
-                        <div class="xe-comment">
-                            <a href="#" class="xe-user-name overflowClip_1">
-                                <strong>Lindel</strong>
-                            </a>
-                            <p class="overflowClip_2">Lindel description</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <br/>
-
+        <div id="lindel-sections"></div>
         <br/>
         <!--END UEDTeam -->
         <!-- Main Footer -->
