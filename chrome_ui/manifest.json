@@ -8,6 +8,10 @@
     "bookmarks",
     "favicon"
   ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
   "action": {
     "default_icon": {
       "32": "assets/img/pokemon-icons/png/1x/202-wobbuffet.png",

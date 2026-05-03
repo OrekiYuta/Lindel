@@ -1,4 +1,16 @@
 const BOOKMARK_SIDEBAR_WIDTH_KEY = "bookmarkSidebarWidth";
+const BOOKMARK_STATUS_PENDING = "pending";
+const BOOKMARK_STATUS_REACHABLE = "reachable";
+const BOOKMARK_STATUS_UNAVAILABLE = "unavailable";
+const BOOKMARK_STATUS_CACHE_KEY = "bookmarkStatusCache";
+const BOOKMARK_CHECK_CONCURRENCY = 6;
+const BOOKMARK_CHECK_TIMEOUT_MS = 8000;
+const BOOKMARK_STATUS_CACHE_TTL_REACHABLE_MS = 24 * 60 * 60 * 1000;
+const BOOKMARK_STATUS_CACHE_TTL_UNAVAILABLE_MS = 30 * 60 * 1000;
+const BOOKMARK_STATUS_CACHE_SAVE_DEBOUNCE_MS = 300;
+const BOOKMARK_STATUS_CACHE_MAX_ENTRIES = 5000;
+
+let bookmarkStatusCacheSaveTimer = null;
 
 function clamp(num, min, max) {
   return Math.min(Math.max(num, min), max);
@@ -188,6 +200,322 @@ function setTotalCount(count) {
   }
 }
 
+function setReachableCount(count) {
+  const reachableValueEl = document.getElementById("bookmark-reachable-value");
+  if (reachableValueEl) {
+    reachableValueEl.textContent = String(count);
+  }
+}
+
+function setUnavailableCount(count) {
+  const unavailableValueEl = document.getElementById(
+    "bookmark-unavailable-value"
+  );
+  if (unavailableValueEl) {
+    unavailableValueEl.textContent = String(count);
+  }
+}
+
+function collectAllBookmarks(node, collector = []) {
+  if (!node) return collector;
+  if (node.url) {
+    collector.push(node);
+    return collector;
+  }
+  if (!Array.isArray(node.children)) return collector;
+  node.children.forEach((child) => collectAllBookmarks(child, collector));
+  return collector;
+}
+
+function collectBookmarksForAvailabilityCheck(
+  node,
+  folderDepth = 0,
+  folderIds = [],
+  collector = [],
+  orderRef = { value: 0 }
+) {
+  if (!node) return collector;
+
+  if (node.url) {
+    collector.push({
+      bookmark: node,
+      folderDepth,
+      folderIds,
+      order: orderRef.value,
+    });
+    orderRef.value += 1;
+    return collector;
+  }
+
+  if (!Array.isArray(node.children)) return collector;
+
+  node.children.forEach((child) => {
+    const nextFolderDepth = child?.url ? folderDepth : folderDepth + 1;
+    const nextFolderIds = child?.url
+      ? folderIds
+      : [...folderIds, child.id || child.title || ""];
+    collectBookmarksForAvailabilityCheck(
+      child,
+      nextFolderDepth,
+      nextFolderIds,
+      collector,
+      orderRef
+    );
+  });
+
+  return collector;
+}
+
+function compareAvailabilityEntries(left, right, priorityFolderId = "") {
+  const hasPriorityFolder = Boolean(priorityFolderId);
+  if (hasPriorityFolder) {
+    const leftInPriorityFolder = left.folderIds.includes(priorityFolderId);
+    const rightInPriorityFolder = right.folderIds.includes(priorityFolderId);
+    if (leftInPriorityFolder !== rightInPriorityFolder) {
+      return leftInPriorityFolder ? -1 : 1;
+    }
+  }
+
+  if (left.folderDepth !== right.folderDepth) {
+    return left.folderDepth - right.folderDepth;
+  }
+
+  return left.order - right.order;
+}
+
+function getAvailabilityCheckQueue(rootNode, currentFolderId = "") {
+  return collectBookmarksForAvailabilityCheck(rootNode).sort((left, right) =>
+    compareAvailabilityEntries(left, right, currentFolderId)
+  );
+}
+
+function isCacheableBookmarkStatus(status) {
+  return [BOOKMARK_STATUS_REACHABLE, BOOKMARK_STATUS_UNAVAILABLE].includes(
+    status
+  );
+}
+
+function getBookmarkStatusCacheTtl(status) {
+  if (status === BOOKMARK_STATUS_REACHABLE) {
+    return BOOKMARK_STATUS_CACHE_TTL_REACHABLE_MS;
+  }
+
+  if (status === BOOKMARK_STATUS_UNAVAILABLE) {
+    return BOOKMARK_STATUS_CACHE_TTL_UNAVAILABLE_MS;
+  }
+
+  return 0;
+}
+
+function pruneBookmarkStatusCache(cache) {
+  const now = Date.now();
+  const validEntries = Object.entries(cache || {})
+    .filter(([url, entry]) => {
+      if (!url || !entry || typeof entry !== "object") return false;
+      if (!isCacheableBookmarkStatus(entry.status)) return false;
+      if (!Number.isFinite(entry.checkedAt)) return false;
+      return now - entry.checkedAt <= getBookmarkStatusCacheTtl(entry.status);
+    })
+    .sort((left, right) => right[1].checkedAt - left[1].checkedAt)
+    .slice(0, BOOKMARK_STATUS_CACHE_MAX_ENTRIES);
+
+  return Object.fromEntries(validEntries);
+}
+
+function loadBookmarkStatusCache() {
+  try {
+    const raw = localStorage.getItem(BOOKMARK_STATUS_CACHE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return {};
+    return pruneBookmarkStatusCache(parsed);
+  } catch (_error) {
+    return {};
+  }
+}
+
+function persistBookmarkStatusCache(cache) {
+  try {
+    localStorage.setItem(
+      BOOKMARK_STATUS_CACHE_KEY,
+      JSON.stringify(pruneBookmarkStatusCache(cache))
+    );
+  } catch (_error) {
+    // Ignore storage failures and continue live checks.
+  }
+}
+
+function scheduleBookmarkStatusCachePersist(cache) {
+  window.clearTimeout(bookmarkStatusCacheSaveTimer);
+  bookmarkStatusCacheSaveTimer = window.setTimeout(() => {
+    persistBookmarkStatusCache(cache);
+  }, BOOKMARK_STATUS_CACHE_SAVE_DEBOUNCE_MS);
+}
+
+function getCachedBookmarkStatus(url, cache) {
+  if (!url || !cache) return null;
+  const entry = cache[url];
+  if (!entry || !Number.isFinite(entry.checkedAt)) return null;
+  if (!isCacheableBookmarkStatus(entry.status)) return null;
+  if (Date.now() - entry.checkedAt > getBookmarkStatusCacheTtl(entry.status)) {
+    delete cache[url];
+    scheduleBookmarkStatusCachePersist(cache);
+    return null;
+  }
+  return entry.status;
+}
+
+function updateBookmarkStatusCache(url, status, cache) {
+  if (!url || !isCacheableBookmarkStatus(status) || !cache) return;
+  cache[url] = {
+    status,
+    checkedAt: Date.now(),
+  };
+  scheduleBookmarkStatusCachePersist(cache);
+}
+
+function applyCachedBookmarkStatuses(bookmarks, statusMap, cache) {
+  bookmarks.forEach((bookmark) => {
+    const cachedStatus = getCachedBookmarkStatus(bookmark.url, cache);
+    if (cachedStatus) {
+      statusMap.set(bookmark.id, cachedStatus);
+    }
+  });
+}
+
+function summarizeBookmarkStatuses(bookmarks, statusMap) {
+  return bookmarks.reduce(
+    (summary, bookmark) => {
+      const status = statusMap.get(bookmark.id);
+      if (status === BOOKMARK_STATUS_REACHABLE) {
+        summary.reachable += 1;
+      } else if (status === BOOKMARK_STATUS_UNAVAILABLE) {
+        summary.unavailable += 1;
+      }
+      return summary;
+    },
+    { reachable: 0, unavailable: 0 }
+  );
+}
+
+function updateBookmarkStatusSummary(bookmarks, statusMap) {
+  const summary = summarizeBookmarkStatuses(bookmarks, statusMap);
+  setReachableCount(summary.reachable);
+  setUnavailableCount(summary.unavailable);
+}
+
+function applyBookmarkCardStatus(card, status) {
+  if (!card) return;
+  card.classList.remove(
+    "bookmark-card-status-pending",
+    "bookmark-card-status-reachable",
+    "bookmark-card-status-unavailable"
+  );
+  card.classList.add(`bookmark-card-status-${status}`);
+}
+
+function updateBookmarkCardStatus(bookmarkId, status) {
+  const card = document.querySelector(
+    `[data-bookmark-id="${bookmarkId}"]`
+  );
+  applyBookmarkCardStatus(card, status);
+}
+
+function shouldTreatResponseAsReachable(response) {
+  if (!response) return false;
+  if (response.ok) return true;
+  return [401, 403].includes(response.status);
+}
+
+async function fetchBookmarkStatus(url, method) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(
+    () => controller.abort(),
+    BOOKMARK_CHECK_TIMEOUT_MS
+  );
+
+  try {
+    const response = await fetch(url, {
+      method,
+      redirect: "follow",
+      cache: "no-store",
+      credentials: "omit",
+      signal: controller.signal,
+    });
+
+    if (shouldTreatResponseAsReachable(response)) {
+      return BOOKMARK_STATUS_REACHABLE;
+    }
+
+    if (method === "HEAD" && [405, 500, 501].includes(response.status)) {
+      return null;
+    }
+
+    return BOOKMARK_STATUS_UNAVAILABLE;
+  } catch (_error) {
+    return null;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+async function probeBookmarkStatus(url) {
+  if (!url) return BOOKMARK_STATUS_UNAVAILABLE;
+
+  const headStatus = await fetchBookmarkStatus(url, "HEAD");
+  if (headStatus) {
+    return headStatus;
+  }
+
+  const getStatus = await fetchBookmarkStatus(url, "GET");
+  return getStatus || BOOKMARK_STATUS_UNAVAILABLE;
+}
+
+function createAvailabilityCheckScheduler(
+  entries,
+  statusMap,
+  onUpdate,
+  cache,
+  initialPriorityFolderId = ""
+) {
+  const pendingEntries = entries
+    .filter((entry) => entry?.bookmark && !statusMap.has(entry.bookmark.id))
+    .slice();
+  let priorityFolderId = initialPriorityFolderId;
+
+  function reprioritize(nextPriorityFolderId = "") {
+    priorityFolderId = nextPriorityFolderId || "";
+    pendingEntries.sort((left, right) =>
+      compareAvailabilityEntries(left, right, priorityFolderId)
+    );
+  }
+
+  reprioritize(priorityFolderId);
+
+  async function worker() {
+    while (pendingEntries.length) {
+      const nextEntry = pendingEntries.shift();
+      if (!nextEntry?.bookmark) continue;
+
+      const { bookmark } = nextEntry;
+      const status = await probeBookmarkStatus(bookmark.url);
+      statusMap.set(bookmark.id, status);
+      updateBookmarkStatusCache(bookmark.url, status, cache);
+      onUpdate(bookmark, status);
+    }
+  }
+
+  const workerCount = Math.min(BOOKMARK_CHECK_CONCURRENCY, pendingEntries.length);
+  const completionPromise = Promise.all(
+    Array.from({ length: workerCount }, () => worker())
+  );
+
+  return {
+    reprioritize,
+    completionPromise,
+  };
+}
+
 function getBookmarkFaviconUrl(pageUrl) {
   if (!pageUrl) return "";
   return chrome.runtime.getURL(
@@ -235,7 +563,7 @@ function createBookmarkSiteIcon(pageUrl, title) {
   return iconWrap;
 }
 
-function renderBookmarkCards(folderNode) {
+function renderBookmarkCards(folderNode, statusMap) {
   const container = document.getElementById("bookmarks");
   container.innerHTML = "";
   if (!folderNode || !folderNode.children) {
@@ -265,11 +593,19 @@ function renderBookmarkCards(folderNode) {
 
     const card = document.createElement("div");
     card.className = "xe-widget xe-conversations box2 label-info bookmark-card";
+    card.setAttribute("data-bookmark-id", node.id || "");
     card.setAttribute("data-toggle", "tooltip");
     card.setAttribute("data-placement", "bottom");
     card.setAttribute("title", "");
     card.setAttribute("data-original-title", node.url || "");
     card.onclick = () => window.open(node.url, "_blank");
+
+    const statusBar = document.createElement("div");
+    statusBar.className = "bookmark-card-status-bar";
+    card.appendChild(statusBar);
+
+    const status = statusMap?.get(node.id) || BOOKMARK_STATUS_PENDING;
+    applyBookmarkCardStatus(card, status);
 
     const entry = document.createElement("div");
     entry.className = "xe-comment-entry";
@@ -359,12 +695,23 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("bookmarks").innerHTML = "";
         document.getElementById("current-folder-title").textContent = "Bookmarks";
         setTotalCount(0);
+        setReachableCount(0);
+        setUnavailableCount(0);
         setCurrentCount(0);
         return;
       }
 
       const totalBookmarkCount = countAllBookmarks(bookmarkBarNode);
+      const allBookmarks = collectAllBookmarks(bookmarkBarNode);
+      const bookmarkStatusCache = loadBookmarkStatusCache();
+      const bookmarkStatusMap = new Map();
+      applyCachedBookmarkStatuses(allBookmarks, bookmarkStatusMap, bookmarkStatusCache);
+      const availabilityQueue = getAvailabilityCheckQueue(
+        bookmarkBarNode,
+        bookmarkBarNode.id || ""
+      );
       setTotalCount(totalBookmarkCount);
+      updateBookmarkStatusSummary(allBookmarks, bookmarkStatusMap);
       const folderIconMap = buildFolderIconMap(
         bookmarkBarNode.children,
         svgList
@@ -386,6 +733,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Start with all tree branches collapsed.
       const expandedSet = new Set();
+      const availabilityScheduler = createAvailabilityCheckScheduler(
+        availabilityQueue,
+        bookmarkStatusMap,
+        (bookmark, status) => {
+          updateBookmarkStatusSummary(allBookmarks, bookmarkStatusMap);
+          updateBookmarkCardStatus(bookmark.id, status);
+        },
+        bookmarkStatusCache,
+        currentFolder?.id || bookmarkBarNode.id || ""
+      );
 
       function renderSidebar() {
         const foldersUl = document.getElementById("folders");
@@ -398,7 +755,8 @@ document.addEventListener("DOMContentLoaded", () => {
           (node) => {
             if (node) {
               currentFolder = node;
-              renderBookmarkCards(node);
+              availabilityScheduler.reprioritize(node.id || "");
+              renderBookmarkCards(node, bookmarkStatusMap);
               document.getElementById("current-folder-title").textContent =
                 node.title || "Bookmarks";
             }
@@ -411,7 +769,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       renderSidebar();
-      renderBookmarkCards(currentFolder);
+      renderBookmarkCards(currentFolder, bookmarkStatusMap);
       document.getElementById("current-folder-title").textContent =
         currentFolder?.title || "Bookmarks";
     });
