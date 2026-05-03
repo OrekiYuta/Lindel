@@ -158,6 +158,15 @@ function pickBookmarkBarNode(bookmarkTreeNodes) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // 避免占位链接 href="#" 触发页面回到顶部
+  document
+    .querySelectorAll(".user-info-navbar a[href='#'], .logo-env a[href='#']")
+    .forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+      });
+    });
+
   chrome.bookmarks.getTree((bookmarkTreeNodes) => {
     const bookmarkBarNode = pickBookmarkBarNode(bookmarkTreeNodes);
 
@@ -207,6 +216,22 @@ document.addEventListener("DOMContentLoaded", () => {
         expandedSet
       );
     }
+
+    // 收起左侧栏时，清空展开状态，避免子菜单悬浮到右侧主体
+    const sidebarToggleLinks = document.querySelectorAll(
+      ".user-info-navbar a[data-toggle='sidebar']"
+    );
+    sidebarToggleLinks.forEach((toggleLink) => {
+      toggleLink.addEventListener("click", () => {
+        window.setTimeout(() => {
+          const sidebar = document.querySelector(".sidebar-menu");
+          if (sidebar && sidebar.classList.contains("collapsed")) {
+            expandedSet.clear();
+            renderSidebar();
+          }
+        }, 80);
+      });
+    });
 
     renderSidebar();
     renderBookmarkCards(currentFolder);

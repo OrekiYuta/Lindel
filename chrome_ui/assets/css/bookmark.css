@@ -7,7 +7,7 @@
 }
 
 .bookmark-logo-text {
-  color: #2c2e2f;
+  color: #96e56f;
   font-size: 20px;
   font-weight: 700;
   letter-spacing: 0.2px;
@@ -76,6 +76,20 @@
 
 .bookmark-main-content {
   padding-bottom: 18px;
+}
+
+.user-info-navbar .user-info-menu > li.bookmark-title-item {
+  display: flex;
+  align-items: center;
+  min-height: 75px;
+  padding: 0 8px;
+  border-left: 0;
+  border-right: 0;
+}
+
+.user-info-navbar .user-info-menu > li.bookmark-title-item .bookmark-page-title {
+  margin: 0;
+  line-height: 1.25;
 }
 
 .bookmark-page-title {
