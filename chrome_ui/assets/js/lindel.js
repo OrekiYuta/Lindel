@@ -1,4 +1,34 @@
 $(document).ready(function() {
+    function normalizeUrl(rawUrl) {
+        try {
+            const url = new URL(rawUrl);
+            url.hash = "";
+            return url.href;
+        } catch (e) {
+            return rawUrl;
+        }
+    }
+
+    function openOrFocusTab(targetUrl) {
+        const normalizedTarget = normalizeUrl(targetUrl);
+
+        chrome.tabs.query({}, function(tabs) {
+            const existingTab = tabs.find(function(tab) {
+                return tab.url && normalizeUrl(tab.url) === normalizedTarget;
+            });
+
+            if (existingTab && existingTab.id !== undefined) {
+                chrome.tabs.update(existingTab.id, { active: true });
+                if (existingTab.windowId !== undefined) {
+                    chrome.windows.update(existingTab.windowId, { focused: true });
+                }
+                return;
+            }
+
+            chrome.tabs.create({ url: targetUrl });
+        });
+    }
+
     const observer = lozad();
     observer.observe();
 
@@ -44,6 +74,12 @@ $(document).ready(function() {
     const svgListUrl = chrome.runtime.getURL("assets/json/svg-icons.json");
     $.getJSON(svgListUrl, function(svgList) {
     $(".random-icon").each(function() {
+            const fixedIcon = $(this).data("icon");
+            if (fixedIcon) {
+                $(this).html('<img src="' + chrome.runtime.getURL(fixedIcon) + '" alt="icon" class="random-svg">');
+                return;
+            }
+
             var randomSvg = svgList[Math.floor(Math.random() * svgList.length)];
             $(this).html('<img src="' + chrome.runtime.getURL(randomSvg) + '" alt="icon" class="random-svg">');
         });
@@ -54,7 +90,15 @@ $(document).ready(function() {
       const page = $(this).data("page");
       if (page) {
         const url = chrome.runtime.getURL(page);
-        window.open(url, "_blank");
+        openOrFocusTab(url);
+      }
+    });
+
+    // open external URL
+    $(document).on("click", ".xe-widget[data-url]", function() {
+      const url = $(this).data("url");
+      if (url) {
+        openOrFocusTab(url);
       }
     });
 
