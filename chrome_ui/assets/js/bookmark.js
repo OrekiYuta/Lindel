@@ -14,7 +14,7 @@ function renderFolderTree(
   depth = 0
 ) {
   nodes.forEach((node) => {
-    if (!node.children) return; // 只渲染文件夹
+    if (!node.children) return; // Render folders only.
 
     const li = document.createElement("li");
     li.className = "folder-node";
@@ -52,12 +52,12 @@ function renderFolderTree(
 
     const text = document.createElement("span");
     text.className = "title";
-    text.textContent = node.title || "未命名文件夹";
+    text.textContent = node.title || "Untitled Folder";
     titleLink.appendChild(text);
 
     titleLink.appendChild(arrow);
 
-    // 点击整行菜单：切换当前文件夹，并在有子目录时展开/折叠
+    // Click row: select folder, and toggle expand/collapse if it has subfolders.
     titleLink.onclick = (e) => {
       e.stopPropagation();
       e.preventDefault();
@@ -77,7 +77,7 @@ function renderFolderTree(
       const subUl = document.createElement("ul");
       subUl.className = "folder-tree";
       subUl.style.marginLeft = "16px";
-      subUl.style.display = isExpanded ? "block" : "none"; // 默认折叠
+      subUl.style.display = isExpanded ? "block" : "none"; // Collapsed by default.
       renderFolderTree(
         node.children,
         subUl,
@@ -142,17 +142,37 @@ function setupSidebarResize() {
   });
 }
 
+function countAllBookmarks(node) {
+  if (!node) return 0;
+  if (node.url) return 1;
+  if (!Array.isArray(node.children)) return 0;
+  return node.children.reduce((sum, child) => sum + countAllBookmarks(child), 0);
+}
+
+function setCurrentCount(count) {
+  const countValueEl = document.getElementById("bookmark-current-value");
+  if (countValueEl) {
+    countValueEl.textContent = String(count);
+  }
+}
+
+function setTotalCount(count) {
+  const totalValueEl = document.getElementById("bookmark-total-value");
+  if (totalValueEl) {
+    totalValueEl.textContent = String(count);
+  }
+}
+
 function renderBookmarkCards(folderNode) {
   const container = document.getElementById("bookmarks");
-  const countEl = document.getElementById("bookmark-count");
   container.innerHTML = "";
   if (!folderNode || !folderNode.children) {
-    countEl.textContent = "0 items";
+    setCurrentCount(0);
     return;
   }
 
   const bookmarkItems = folderNode.children.filter((node) => node.url);
-  countEl.textContent = `${bookmarkItems.length} items`;
+  setCurrentCount(bookmarkItems.length);
 
   if (!bookmarkItems.length) {
     const emptyCol = document.createElement("div");
@@ -160,7 +180,7 @@ function renderBookmarkCards(folderNode) {
 
     const empty = document.createElement("div");
     empty.className = "bookmark-empty";
-    empty.textContent = "这个文件夹里还没有书签";
+    empty.textContent = "No bookmarks in this folder yet.";
 
     emptyCol.appendChild(empty);
     container.appendChild(emptyCol);
@@ -218,20 +238,20 @@ function pickBookmarkBarNode(bookmarkTreeNodes) {
   const root = Array.isArray(bookmarkTreeNodes) ? bookmarkTreeNodes[0] : null;
   if (!root || !Array.isArray(root.children)) return null;
 
-  // Chrome 通常把书签栏固定为 id=1
+  // Chrome usually keeps the bookmark bar at id=1.
   let bar = root.children.find((n) => n && n.id === "1");
 
-  // 本地化标题兜底
+  // Localized title fallback.
   if (!bar) {
     bar = root.children.find(
       (n) =>
         n &&
         typeof n.title === "string" &&
-        ["书签栏", "Bookmarks bar", "Bookmark bar"].includes(n.title.trim())
+        ["Bookmarks bar", "Bookmark bar"].includes(n.title.trim())
     );
   }
 
-  // 最后兜底：第一个可用目录
+  // Final fallback: first available folder-like node.
   if (!bar) {
     bar = root.children.find((n) => n && Array.isArray(n.children));
   }
@@ -242,7 +262,7 @@ function pickBookmarkBarNode(bookmarkTreeNodes) {
 document.addEventListener("DOMContentLoaded", () => {
   setupSidebarResize();
 
-  // 避免占位链接 href="#" 触发页面回到顶部
+  // Prevent placeholder links from scrolling back to the top.
   document
     .querySelectorAll(".user-info-navbar a[href='#'], .logo-env a[href='#']")
     .forEach((link) => {
@@ -267,12 +287,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!bookmarkBarNode || !Array.isArray(bookmarkBarNode.children)) {
         document.getElementById("folders").innerHTML = "";
         document.getElementById("bookmarks").innerHTML = "";
-        document.getElementById("current-folder-title").textContent = "我的书签";
-        document.getElementById("bookmark-count").textContent = "0 items";
+        document.getElementById("current-folder-title").textContent = "Bookmarks";
+        setTotalCount(0);
+        setCurrentCount(0);
         return;
       }
 
-    // 默认选中书签栏中的第一个可用文件夹
+      const totalBookmarkCount = countAllBookmarks(bookmarkBarNode);
+      setTotalCount(totalBookmarkCount);
+
+      // Default selection: first available folder under bookmark bar.
       function findFirstFolder(node) {
         if (node.children && node.children.length) return node;
         if (node.children) {
@@ -286,14 +310,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       let currentFolder = findFirstFolder(bookmarkBarNode);
 
-      // 默认全部折叠
+      // Start with all tree branches collapsed.
       const expandedSet = new Set();
 
       function renderSidebar() {
         const foldersUl = document.getElementById("folders");
         foldersUl.innerHTML = "";
 
-        // 只渲染书签栏下的内容
+        // Render only nodes under bookmark bar.
         renderFolderTree(
           bookmarkBarNode.children,
           foldersUl,
@@ -302,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
               currentFolder = node;
               renderBookmarkCards(node);
               document.getElementById("current-folder-title").textContent =
-                node.title || "我的书签";
+                node.title || "Bookmarks";
             }
             renderSidebar();
           },
@@ -315,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
       renderSidebar();
       renderBookmarkCards(currentFolder);
       document.getElementById("current-folder-title").textContent =
-        currentFolder?.title || "我的书签";
+        currentFolder?.title || "Bookmarks";
     });
   }
 });

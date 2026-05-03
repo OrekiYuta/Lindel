@@ -89,7 +89,7 @@
   padding: 10px 18px;
 }
 
-/* collapsed 模式不显示悬浮子菜单，避免遮挡主内容 */
+/* Hide floating submenus in collapsed mode to avoid covering main content. */
 .bookmark-page .sidebar-menu.collapsed #folders.main-menu > li > ul,
 .bookmark-page .sidebar-menu.collapsed #folders.main-menu > li:hover > ul {
   display: none !important;
@@ -137,13 +137,61 @@
 }
 
 .bookmark-count {
-  display: inline-block;
-  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
   border-radius: 999px;
-  background: #ecf5e3;
-  color: #5d9831;
+  border: 1px solid transparent;
   font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.1px;
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.06);
+}
+
+.bookmark-count-item {
+  display: flex;
+  align-items: center;
+  min-height: 75px;
+}
+
+.bookmark-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bookmark-count-total {
+  color: #2c4a9c;
+  border-color: #cfdbfb;
+  background: linear-gradient(180deg, #f6f8ff 0%, #e9efff 100%);
+}
+
+.bookmark-count-current {
+  color: #2f6d15;
+  border-color: #d1e5be;
+  background: linear-gradient(180deg, #f5fbee 0%, #e8f4dc 100%);
+}
+
+.bookmark-count i {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.bookmark-count-label {
+  color: inherit;
+  opacity: 0.92;
+}
+
+.bookmark-count-value {
+  min-width: 26px;
+  padding: 1px 8px;
+  text-align: center;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.92);
 }
 
 .bookmark-card-list {

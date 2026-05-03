@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -51,13 +51,24 @@
           <li class="bookmark-title-item">
             <h4 class="text-gray bookmark-page-title">
               <i class="linecons-tag"></i>
-              <span id="current-folder-title">我的书签</span>
+              <span id="current-folder-title">Bookmarks</span>
             </h4>
           </li>
         </ul>
-        <ul class="user-info-menu right-links list-inline list-unstyled">
-          <li>
-            <span id="bookmark-count" class="bookmark-count">0 items</span>
+        <ul class="user-info-menu right-links list-inline list-unstyled bookmark-stats">
+          <li class="bookmark-count-item">
+            <span id="bookmark-total-count" class="bookmark-count bookmark-count-total">
+              <i class="fa fa-globe"></i>
+              <span class="bookmark-count-label">Total</span>
+              <strong id="bookmark-total-value" class="bookmark-count-value">0</strong>
+            </span>
+          </li>
+          <li class="bookmark-count-item">
+            <span id="bookmark-count" class="bookmark-count bookmark-count-current">
+              <i class="fa fa-folder-open"></i>
+              <span class="bookmark-count-label">Current Folder</span>
+              <strong id="bookmark-current-value" class="bookmark-count-value">0</strong>
+            </span>
           </li>
         </ul>
       </nav>
