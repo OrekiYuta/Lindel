@@ -22,6 +22,23 @@
   letter-spacing: 0.2px;
 }
 
+.bookmark-logo-collapsed {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: #96e56f;
+  background: rgba(150, 229, 111, 0.1);
+  border: 1px solid rgba(150, 229, 111, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+}
+
+.bookmark-logo-collapsed i {
+  font-size: 16px;
+}
+
 #folders.main-menu {
   margin-top: 8px;
 }
@@ -46,6 +63,14 @@
   width: auto;
   height: 1.4em;
   vertical-align: middle;
+}
+
+#folders > .folder-node > .folder-title .random-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  min-width: 22px;
 }
 
 #folders .folder-title:hover {
@@ -92,6 +117,27 @@
 /* Hide floating submenus in collapsed mode to avoid covering main content. */
 .bookmark-page .sidebar-menu.collapsed #folders.main-menu > li > ul,
 .bookmark-page .sidebar-menu.collapsed #folders.main-menu > li:hover > ul {
+  display: none !important;
+}
+
+.bookmark-page .sidebar-menu.collapsed .logo-env {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.bookmark-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+  border-left-color: transparent;
+}
+
+.bookmark-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title > .random-icon {
+  display: inline-flex !important;
+}
+
+.bookmark-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title > .title,
+.bookmark-page .sidebar-menu.collapsed #folders.main-menu > .folder-node > .folder-title > .folder-arrow {
   display: none !important;
 }
 

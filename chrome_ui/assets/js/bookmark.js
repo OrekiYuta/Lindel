@@ -4,13 +4,38 @@ function clamp(num, min, max) {
   return Math.min(Math.max(num, min), max);
 }
 
+function getFolderIconKey(node) {
+  return node?.id || node?.title || "bookmark-folder";
+}
+
+function buildFolderIconMap(nodes, svgList) {
+  const folderIconMap = new Map();
+  if (!Array.isArray(nodes) || !Array.isArray(svgList) || !svgList.length) {
+    return folderIconMap;
+  }
+
+  nodes.forEach((node) => {
+    if (!node?.children) return;
+    const randomSvg = svgList[Math.floor(Math.random() * svgList.length)];
+    if (randomSvg) {
+      folderIconMap.set(getFolderIconKey(node), randomSvg);
+    }
+  });
+
+  return folderIconMap;
+}
+
+function pickFolderIconPath(node, folderIconMap) {
+  return folderIconMap.get(getFolderIconKey(node)) || "";
+}
+
 function renderFolderTree(
   nodes,
   parentUl,
   onSelect,
   currentId,
   expandedSet,
-  svgList,
+  folderIconMap,
   depth = 0
 ) {
   nodes.forEach((node) => {
@@ -41,8 +66,8 @@ function renderFolderTree(
     if (depth === 0) {
       const iconWrap = document.createElement("span");
       iconWrap.className = "random-icon";
-      if (Array.isArray(svgList) && svgList.length) {
-        const randomSvg = svgList[Math.floor(Math.random() * svgList.length)];
+      const randomSvg = pickFolderIconPath(node, folderIconMap);
+      if (randomSvg) {
         iconWrap.innerHTML = `<img src="${chrome.runtime.getURL(
           randomSvg
         )}" alt="icon" class="random-svg">`;
@@ -84,7 +109,7 @@ function renderFolderTree(
         onSelect,
         currentId,
         expandedSet,
-        svgList,
+        folderIconMap,
         depth + 1
       );
       li.appendChild(subUl);
@@ -340,6 +365,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const totalBookmarkCount = countAllBookmarks(bookmarkBarNode);
       setTotalCount(totalBookmarkCount);
+      const folderIconMap = buildFolderIconMap(
+        bookmarkBarNode.children,
+        svgList
+      );
 
       // Default selection: first available folder under bookmark bar.
       function findFirstFolder(node) {
@@ -377,7 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
           },
           currentFolder?.id,
           expandedSet,
-          svgList
+          folderIconMap
         );
       }
 
