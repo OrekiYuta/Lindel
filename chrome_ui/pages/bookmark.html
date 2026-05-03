@@ -1,139 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <title>Bookmarks</title>
-  <link rel="stylesheet" href="../assets/css/lindel.css" />
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      height: 100vh;
-      background: #f4f6f8;
-    }
-
-    .sidebar {
-      width: 260px;
-      border-right: 1px solid #e0e0e0;
-      background: #fff;
-      padding: 20px 10px 10px 20px;
-      overflow-y: auto;
-      box-shadow: 2px 0 8px rgba(0,0,0,0.03);
-    }
-
-    .sidebar h3 {
-      margin-top: 0;
-      font-size: 18px;
-      color: #333;
-      margin-bottom: 16px;
-    }
-
-    .folder-tree {
-      list-style: none;
-      padding-left: 0;
-      margin: 0;
-    }
-
-    .folder-node {
-      margin-bottom: 4px;
-    }
-
-    .folder-title {
-      cursor: pointer;
-      font-weight: 500;
-      padding: 4px 8px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      transition: background 0.2s;
-      user-select: none;
-    }
-
-    .folder-title:hover, .folder-title.active {
-      background: #e3eafc;
-      color: #2563eb;
-    }
-
-    .folder-arrow {
-      font-size: 12px;
-      margin-right: 6px;
-      transition: transform 0.2s;
-      display: inline-block;
-      width: 16px;
-      text-align: center;
-    }
-
-    .folder-arrow.collapsed {
-      transform: rotate(-90deg);
-    }
-
-    .content {
-      flex: 1;
-      padding: 32px 40px;
-      overflow-y: auto;
-    }
-
-    .content h2 {
-      margin-top: 0;
-      font-size: 22px;
-      color: #222;
-      margin-bottom: 18px;
-    }
-
-    .bookmark-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-    }
-
-    .bookmark-card {
-      background: #fff;
-      border: 1px solid #e0e0e0;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      padding: 18px 20px;
-      min-width: 220px;
-      max-width: 260px;
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      transition: box-shadow 0.2s;
-    }
-
-    .bookmark-card:hover {
-      box-shadow: 0 4px 16px rgba(37,99,235,0.10);
-      border-color: #2563eb;
-    }
-
-    .bookmark-card a {
-      color: #2563eb;
-      font-size: 16px;
-      font-weight: 500;
-      text-decoration: none;
-      word-break: break-all;
-    }
-
-    .bookmark-card a:hover {
-      text-decoration: underline;
-    }
-  </style>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lindel - Bookmarks</title>
+  <link rel="stylesheet" href="../assets/css/fonts/linecons/css/linecons.css" />
+  <link rel="stylesheet" href="../assets/css/fonts/fontawesome/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="../assets/css/bootstrap.css" />
+  <link rel="stylesheet" href="../assets/css/xenon-core.css" />
+  <link rel="stylesheet" href="../assets/css/xenon-components.css" />
+  <link rel="stylesheet" href="../assets/css/xenon-skins.css" />
+  <link rel="stylesheet" href="../assets/css/nav.css" />
+  <link rel="stylesheet" href="../assets/css/bookmark.css" />
+  <script src="../assets/js/jquery-3.7.1.min.js"></script>
 </head>
-<body>
-  <div class="sidebar">
-    <h3>Bookmarks</h3>
-    <ul id="folders" class="folder-tree">
-      <!-- Folders will be dynamically populated here -->
-    </ul>
-  </div>
-  <div class="content">
-    <h2 id="current-folder-title">我的书签</h2>
-    <div id="bookmarks" class="bookmark-list">
-      <!-- Bookmarks will be dynamically populated here -->
+<body class="page-body bookmark-page">
+  <div class="page-container">
+    <div class="sidebar-menu toggle-others fixed bookmark-sidebar-wrap">
+      <div class="sidebar-menu-inner">
+        <header class="logo-env">
+          <div class="logo">
+            <a href="#" class="logo-expanded">
+              <span class="bookmark-logo-text">Lindel</span>
+            </a>
+          </div>
+          <div class="mobile-menu-toggle visible-xs">
+            <a href="#" data-toggle="user-info-menu">
+              <i class="linecons-cog"></i>
+            </a>
+            <a href="#" data-toggle="mobile-menu">
+              <i class="fa-bars"></i>
+            </a>
+          </div>
+        </header>
+
+        <ul id="folders" class="main-menu"></ul>
+      </div>
+    </div>
+
+    <div class="main-content bookmark-main-content">
+      <nav class="navbar user-info-navbar" role="navigation">
+        <ul class="user-info-menu left-links list-inline list-unstyled">
+          <li class="hidden-sm hidden-xs">
+            <a href="#" data-toggle="sidebar">
+              <i class="fa-bars"></i>
+            </a>
+          </li>
+          <li class="bookmark-title-item">
+            <h4 class="text-gray bookmark-page-title">
+              <i class="linecons-tag"></i>
+              <span id="current-folder-title">我的书签</span>
+            </h4>
+          </li>
+        </ul>
+        <ul class="user-info-menu right-links list-inline list-unstyled">
+          <li>
+            <span id="bookmark-count" class="bookmark-count">0 items</span>
+          </li>
+        </ul>
+      </nav>
+
+      <div id="bookmarks" class="row bookmark-card-list"></div>
     </div>
   </div>
+
+  <script src="../assets/js/bootstrap.min.js"></script>
+  <script src="../assets/js/TweenMax.min.js"></script>
+  <script src="../assets/js/resizeable.js"></script>
+  <script src="../assets/js/joinable.js"></script>
+  <script src="../assets/js/xenon-api.js"></script>
+  <script src="../assets/js/xenon-toggles.js"></script>
+  <script src="../assets/js/xenon-custom.js"></script>
   <script src="../assets/js/bookmark.js"></script>
 </body>
 </html>

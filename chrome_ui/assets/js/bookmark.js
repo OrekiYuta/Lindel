@@ -5,44 +5,47 @@ function renderFolderTree(nodes, parentUl, onSelect, currentId, expandedSet) {
     const li = document.createElement("li");
     li.className = "folder-node";
 
-    const titleDiv = document.createElement("div");
-    titleDiv.className = "folder-title";
-    if (node.id === currentId) titleDiv.classList.add("active");
+    const titleLink = document.createElement("a");
+    titleLink.className = "folder-title";
+    titleLink.href = "#";
+    if (node.id === currentId) titleLink.classList.add("active");
 
     const hasSubFolders = node.children.some((child) => child.children);
     const isExpanded = expandedSet.has(node.id);
 
+    if (hasSubFolders) {
+      li.classList.add("has-sub");
+      if (isExpanded) li.classList.add("expanded");
+    }
+
     const arrow = document.createElement("span");
     arrow.className = "folder-arrow";
-    arrow.textContent = hasSubFolders ? "▼" : "";
+    arrow.textContent = hasSubFolders ? "▾" : "";
     if (hasSubFolders && !isExpanded) {
       arrow.classList.add("collapsed");
     }
-    titleDiv.appendChild(arrow);
-
     const text = document.createElement("span");
+    text.className = "title";
     text.textContent = node.title || "未命名文件夹";
-    titleDiv.appendChild(text);
+    titleLink.appendChild(text);
 
-    // 点击箭头：仅展开/折叠
-    arrow.onclick = (e) => {
+    titleLink.appendChild(arrow);
+
+    // 点击整行菜单：切换当前文件夹，并在有子目录时展开/折叠
+    titleLink.onclick = (e) => {
       e.stopPropagation();
-      if (!hasSubFolders) return;
-      if (expandedSet.has(node.id)) {
-        expandedSet.delete(node.id);
-      } else {
-        expandedSet.add(node.id);
+      e.preventDefault();
+      if (hasSubFolders) {
+        if (expandedSet.has(node.id)) {
+          expandedSet.delete(node.id);
+        } else {
+          expandedSet.add(node.id);
+        }
       }
-      onSelect(null, true); // 仅重绘侧边栏，不切换右侧
-    };
-
-    // 点击标题：切换当前文件夹并展示右侧书签
-    titleDiv.onclick = (e) => {
-      e.stopPropagation();
       onSelect(node, false);
     };
 
-    li.appendChild(titleDiv);
+    li.appendChild(titleLink);
 
     if (hasSubFolders) {
       const subUl = document.createElement("ul");
@@ -59,16 +62,73 @@ function renderFolderTree(nodes, parentUl, onSelect, currentId, expandedSet) {
 
 function renderBookmarkCards(folderNode) {
   const container = document.getElementById("bookmarks");
+  const countEl = document.getElementById("bookmark-count");
   container.innerHTML = "";
-  if (!folderNode || !folderNode.children) return;
+  if (!folderNode || !folderNode.children) {
+    countEl.textContent = "0 items";
+    return;
+  }
 
-  folderNode.children.forEach((node) => {
-    if (node.url) {
-      const card = document.createElement("div");
-      card.className = "bookmark-card";
-      card.innerHTML = `<a href="${node.url}" target="_blank">${node.title || node.url}</a>`;
-      container.appendChild(card);
-    }
+  const bookmarkItems = folderNode.children.filter((node) => node.url);
+  countEl.textContent = `${bookmarkItems.length} items`;
+
+  if (!bookmarkItems.length) {
+    const emptyCol = document.createElement("div");
+    emptyCol.className = "col-sm-12";
+
+    const empty = document.createElement("div");
+    empty.className = "bookmark-empty";
+    empty.textContent = "这个文件夹里还没有书签";
+
+    emptyCol.appendChild(empty);
+    container.appendChild(emptyCol);
+    return;
+  }
+
+  bookmarkItems.forEach((node) => {
+    const col = document.createElement("div");
+    col.className = "col-sm-3 col-xs-12";
+
+    const card = document.createElement("div");
+    card.className = "xe-widget xe-conversations box2 label-info bookmark-card";
+    card.setAttribute("data-toggle", "tooltip");
+    card.setAttribute("data-placement", "bottom");
+    card.setAttribute("title", "");
+    card.setAttribute("data-original-title", node.url || "");
+    card.onclick = () => window.open(node.url, "_blank");
+
+    const entry = document.createElement("div");
+    entry.className = "xe-comment-entry";
+
+    const iconWrap = document.createElement("span");
+    iconWrap.className = "bookmark-site-icon";
+    iconWrap.innerHTML = '<i class="fa fa-bookmark"></i>';
+
+    const comment = document.createElement("div");
+    comment.className = "xe-comment";
+
+    const titleLink = document.createElement("a");
+    titleLink.href = node.url;
+    titleLink.target = "_blank";
+    titleLink.rel = "noopener noreferrer";
+    titleLink.className = "xe-user-name overflowClip_1";
+
+    const strong = document.createElement("strong");
+    strong.textContent = node.title || node.url;
+    titleLink.appendChild(strong);
+
+    const desc = document.createElement("p");
+    desc.className = "overflowClip_2";
+    desc.textContent = node.url;
+
+    comment.appendChild(titleLink);
+    comment.appendChild(desc);
+
+    entry.appendChild(iconWrap);
+    entry.appendChild(comment);
+    card.appendChild(entry);
+    col.appendChild(card);
+    container.appendChild(col);
   });
 }
 
@@ -105,6 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("folders").innerHTML = "";
       document.getElementById("bookmarks").innerHTML = "";
       document.getElementById("current-folder-title").textContent = "我的书签";
+      document.getElementById("bookmark-count").textContent = "0 items";
       return;
     }
 

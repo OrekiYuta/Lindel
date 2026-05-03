@@ -1,0 +1,136 @@
+.bookmark-page {
+  background: #f9fbfd;
+}
+
+.bookmark-sidebar-wrap {
+  width: 280px;
+}
+
+.bookmark-logo-text {
+  color: #2c2e2f;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+#folders.main-menu {
+  margin-top: 8px;
+}
+
+#folders .folder-node {
+  margin: 0;
+}
+
+#folders .folder-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #979898;
+  min-height: 44px;
+  padding: 12px 18px;
+  line-height: 1.35;
+  font-size: 13px;
+  border-left: 3px solid transparent;
+}
+
+#folders .folder-title:hover {
+  color: #fff;
+  background-color: #2c2e2f;
+}
+
+#folders .folder-title.active {
+  color: #fff;
+  background-color: #2c2e2f;
+  border-left-color: #68b828;
+}
+
+#folders .folder-title .title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+#folders .folder-arrow {
+  margin-left: auto;
+  font-size: 12px;
+  color: #8f8f90;
+  transition: transform 0.2s ease;
+}
+
+#folders .folder-arrow.collapsed {
+  transform: rotate(-90deg);
+}
+
+#folders .folder-tree {
+  list-style: none;
+  margin: 0;
+  padding-left: 12px;
+}
+
+#folders .folder-tree .folder-title {
+  font-size: 12px;
+  min-height: 40px;
+  padding: 10px 18px;
+}
+
+.bookmark-main-content {
+  padding-bottom: 18px;
+}
+
+.bookmark-page-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+}
+
+.bookmark-count {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #ecf5e3;
+  color: #5d9831;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.bookmark-card-list {
+  margin-top: 2px;
+}
+
+.bookmark-card {
+  height: 96px;
+  margin-top: 16px;
+}
+
+.bookmark-card .xe-comment-entry {
+  position: relative;
+  min-height: 64px;
+}
+
+.bookmark-site-icon {
+  float: left;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 34px;
+  background: #f1f6fc;
+}
+
+.bookmark-site-icon i {
+  color: #68b828;
+  font-size: 14px;
+}
+
+.bookmark-empty {
+  margin-top: 20px;
+  padding: 26px 16px;
+  text-align: center;
+  color: #9da9b5;
+  border: 1px dashed #dbe5ef;
+  border-radius: 6px;
+  background: #fff;
+}
+
