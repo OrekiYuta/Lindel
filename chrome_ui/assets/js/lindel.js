@@ -41,10 +41,11 @@ $(document).ready(function() {
     // -----------------------------
     // ADD RANDOM SVG ICONS
     // -----------------------------
-    $.getJSON("../assets/json/svg-icons.json", function(svgList) {
+    const svgListUrl = chrome.runtime.getURL("assets/json/svg-icons.json");
+    $.getJSON(svgListUrl, function(svgList) {
     $(".random-icon").each(function() {
             var randomSvg = svgList[Math.floor(Math.random() * svgList.length)];
-            $(this).html('<img src="../' + randomSvg + '" alt="icon" class="random-svg">');
+            $(this).html('<img src="' + chrome.runtime.getURL(randomSvg) + '" alt="icon" class="random-svg">');
         });
     });
 
