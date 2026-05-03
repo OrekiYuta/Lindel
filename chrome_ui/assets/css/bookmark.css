@@ -1,9 +1,18 @@
 .bookmark-page {
   background: #f9fbfd;
+  --bookmark-sidebar-width: 280px;
 }
 
 .bookmark-sidebar-wrap {
-  width: 280px;
+  position: relative;
+}
+
+.bookmark-sidebar-wrap:not(.collapsed) {
+  width: var(--bookmark-sidebar-width) !important;
+}
+
+.bookmark-sidebar-wrap:not(.collapsed) + .bookmark-main-content {
+  margin-left: var(--bookmark-sidebar-width) !important;
 }
 
 .bookmark-logo-text {
@@ -31,6 +40,12 @@
   line-height: 1.35;
   font-size: 13px;
   border-left: 3px solid transparent;
+}
+
+#folders > .folder-node > .folder-title .random-icon .random-svg {
+  width: auto;
+  height: 1.4em;
+  vertical-align: middle;
 }
 
 #folders .folder-title:hover {
@@ -72,6 +87,28 @@
   font-size: 12px;
   min-height: 40px;
   padding: 10px 18px;
+}
+
+/* collapsed 模式不显示悬浮子菜单，避免遮挡主内容 */
+.bookmark-page .sidebar-menu.collapsed #folders.main-menu > li > ul,
+.bookmark-page .sidebar-menu.collapsed #folders.main-menu > li:hover > ul {
+  display: none !important;
+}
+
+.bookmark-sidebar-resizer {
+  position: absolute;
+  top: 0;
+  right: -3px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 5;
+}
+
+.bookmark-resizing,
+.bookmark-resizing * {
+  user-select: none;
+  cursor: col-resize !important;
 }
 
 .bookmark-main-content {

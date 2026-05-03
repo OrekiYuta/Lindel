@@ -1,4 +1,18 @@
-function renderFolderTree(nodes, parentUl, onSelect, currentId, expandedSet) {
+const BOOKMARK_SIDEBAR_WIDTH_KEY = "bookmarkSidebarWidth";
+
+function clamp(num, min, max) {
+  return Math.min(Math.max(num, min), max);
+}
+
+function renderFolderTree(
+  nodes,
+  parentUl,
+  onSelect,
+  currentId,
+  expandedSet,
+  svgList,
+  depth = 0
+) {
   nodes.forEach((node) => {
     if (!node.children) return; // 只渲染文件夹
 
@@ -24,6 +38,18 @@ function renderFolderTree(nodes, parentUl, onSelect, currentId, expandedSet) {
     if (hasSubFolders && !isExpanded) {
       arrow.classList.add("collapsed");
     }
+    if (depth === 0) {
+      const iconWrap = document.createElement("span");
+      iconWrap.className = "random-icon";
+      if (Array.isArray(svgList) && svgList.length) {
+        const randomSvg = svgList[Math.floor(Math.random() * svgList.length)];
+        iconWrap.innerHTML = `<img src="${chrome.runtime.getURL(
+          randomSvg
+        )}" alt="icon" class="random-svg">`;
+      }
+      titleLink.appendChild(iconWrap);
+    }
+
     const text = document.createElement("span");
     text.className = "title";
     text.textContent = node.title || "未命名文件夹";
@@ -52,11 +78,67 @@ function renderFolderTree(nodes, parentUl, onSelect, currentId, expandedSet) {
       subUl.className = "folder-tree";
       subUl.style.marginLeft = "16px";
       subUl.style.display = isExpanded ? "block" : "none"; // 默认折叠
-      renderFolderTree(node.children, subUl, onSelect, currentId, expandedSet);
+      renderFolderTree(
+        node.children,
+        subUl,
+        onSelect,
+        currentId,
+        expandedSet,
+        svgList,
+        depth + 1
+      );
       li.appendChild(subUl);
     }
 
     parentUl.appendChild(li);
+  });
+}
+
+function setupSidebarResize() {
+  const pageBody = document.querySelector(".bookmark-page");
+  const sidebar = document.querySelector(".bookmark-sidebar-wrap");
+  const resizer = document.querySelector(".bookmark-sidebar-resizer");
+  if (!pageBody || !sidebar || !resizer) return;
+
+  const minWidth = 220;
+  const maxWidth = 520;
+
+  function applySidebarWidth(width) {
+    const next = clamp(width, minWidth, maxWidth);
+    pageBody.style.setProperty("--bookmark-sidebar-width", `${next}px`);
+    localStorage.setItem(BOOKMARK_SIDEBAR_WIDTH_KEY, String(next));
+  }
+
+  const cachedWidth = Number.parseInt(
+    localStorage.getItem(BOOKMARK_SIDEBAR_WIDTH_KEY),
+    10
+  );
+  if (Number.isFinite(cachedWidth)) {
+    applySidebarWidth(cachedWidth);
+  }
+
+  let dragging = false;
+  let startX = 0;
+  let startWidth = 0;
+
+  resizer.addEventListener("mousedown", (event) => {
+    dragging = true;
+    startX = event.clientX;
+    startWidth = sidebar.getBoundingClientRect().width;
+    document.body.classList.add("bookmark-resizing");
+    event.preventDefault();
+  });
+
+  window.addEventListener("mousemove", (event) => {
+    if (!dragging) return;
+    const deltaX = event.clientX - startX;
+    applySidebarWidth(startWidth + deltaX);
+  });
+
+  window.addEventListener("mouseup", () => {
+    if (!dragging) return;
+    dragging = false;
+    document.body.classList.remove("bookmark-resizing");
   });
 }
 
@@ -158,6 +240,8 @@ function pickBookmarkBarNode(bookmarkTreeNodes) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  setupSidebarResize();
+
   // 避免占位链接 href="#" 触发页面回到顶部
   document
     .querySelectorAll(".user-info-navbar a[href='#'], .logo-env a[href='#']")
@@ -167,75 +251,71 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-  chrome.bookmarks.getTree((bookmarkTreeNodes) => {
-    const bookmarkBarNode = pickBookmarkBarNode(bookmarkTreeNodes);
-
-    if (!bookmarkBarNode || !Array.isArray(bookmarkBarNode.children)) {
-      document.getElementById("folders").innerHTML = "";
-      document.getElementById("bookmarks").innerHTML = "";
-      document.getElementById("current-folder-title").textContent = "我的书签";
-      document.getElementById("bookmark-count").textContent = "0 items";
-      return;
-    }
-
-    // 默认选中书签栏中的第一个可用文件夹
-    function findFirstFolder(node) {
-      if (node.children && node.children.length) return node;
-      if (node.children) {
-        for (const child of node.children) {
-          const found = findFirstFolder(child);
-          if (found) return found;
-        }
-      }
-      return node;
-    }
-
-    let currentFolder = findFirstFolder(bookmarkBarNode);
-
-    // 默认全部折叠
-    const expandedSet = new Set();
-
-    function renderSidebar() {
-      const foldersUl = document.getElementById("folders");
-      foldersUl.innerHTML = "";
-
-      // 只渲染书签栏下的内容
-      renderFolderTree(
-        bookmarkBarNode.children,
-        foldersUl,
-        (node, onlyRefreshSidebar) => {
-          if (!onlyRefreshSidebar && node) {
-            currentFolder = node;
-            renderBookmarkCards(node);
-            document.getElementById("current-folder-title").textContent =
-              node.title || "我的书签";
-          }
-          renderSidebar();
-        },
-        currentFolder?.id,
-        expandedSet
-      );
-    }
-
-    // 收起左侧栏时，清空展开状态，避免子菜单悬浮到右侧主体
-    const sidebarToggleLinks = document.querySelectorAll(
-      ".user-info-navbar a[data-toggle='sidebar']"
-    );
-    sidebarToggleLinks.forEach((toggleLink) => {
-      toggleLink.addEventListener("click", () => {
-        window.setTimeout(() => {
-          const sidebar = document.querySelector(".sidebar-menu");
-          if (sidebar && sidebar.classList.contains("collapsed")) {
-            expandedSet.clear();
-            renderSidebar();
-          }
-        }, 80);
-      });
+  const svgListUrl = chrome.runtime.getURL("assets/json/svg-icons.json");
+  $.getJSON(svgListUrl)
+    .done((svgList) => {
+      initializeBookmarkPage(Array.isArray(svgList) ? svgList : []);
+    })
+    .fail(() => {
+      initializeBookmarkPage([]);
     });
 
-    renderSidebar();
-    renderBookmarkCards(currentFolder);
-    document.getElementById("current-folder-title").textContent =
-      currentFolder?.title || "我的书签";
-  });
+  function initializeBookmarkPage(svgList) {
+    chrome.bookmarks.getTree((bookmarkTreeNodes) => {
+      const bookmarkBarNode = pickBookmarkBarNode(bookmarkTreeNodes);
+
+      if (!bookmarkBarNode || !Array.isArray(bookmarkBarNode.children)) {
+        document.getElementById("folders").innerHTML = "";
+        document.getElementById("bookmarks").innerHTML = "";
+        document.getElementById("current-folder-title").textContent = "我的书签";
+        document.getElementById("bookmark-count").textContent = "0 items";
+        return;
+      }
+
+    // 默认选中书签栏中的第一个可用文件夹
+      function findFirstFolder(node) {
+        if (node.children && node.children.length) return node;
+        if (node.children) {
+          for (const child of node.children) {
+            const found = findFirstFolder(child);
+            if (found) return found;
+          }
+        }
+        return node;
+      }
+
+      let currentFolder = findFirstFolder(bookmarkBarNode);
+
+      // 默认全部折叠
+      const expandedSet = new Set();
+
+      function renderSidebar() {
+        const foldersUl = document.getElementById("folders");
+        foldersUl.innerHTML = "";
+
+        // 只渲染书签栏下的内容
+        renderFolderTree(
+          bookmarkBarNode.children,
+          foldersUl,
+          (node) => {
+            if (node) {
+              currentFolder = node;
+              renderBookmarkCards(node);
+              document.getElementById("current-folder-title").textContent =
+                node.title || "我的书签";
+            }
+            renderSidebar();
+          },
+          currentFolder?.id,
+          expandedSet,
+          svgList
+        );
+      }
+
+      renderSidebar();
+      renderBookmarkCards(currentFolder);
+      document.getElementById("current-folder-title").textContent =
+        currentFolder?.title || "我的书签";
+    });
+  }
 });
