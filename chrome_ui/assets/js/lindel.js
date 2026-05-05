@@ -264,6 +264,11 @@ $(document).ready(function () {
         tree.forEach(function (node) {
             menuRoot.appendChild(renderMenuNode(node));
         });
+
+        // Rebind Xenon sidebar interactions after dynamic menu rendering.
+        if (typeof setup_sidebar_menu === "function") {
+            setup_sidebar_menu();
+        }
     }
 
     function renderSections(sections, cards) {
