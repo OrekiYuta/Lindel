@@ -9,6 +9,52 @@ $(document).ready(function () {
         }
     }
 
+    function isAbsoluteUrl(value) {
+        return /^https?:\/\//i.test(String(value || "").trim());
+    }
+
+    function isExtensionResourceUrl(value) {
+        return /^(chrome-extension|moz-extension):\/\//i.test(String(value || "").trim());
+    }
+
+    function resolveCardTargetUrl(cardData) {
+        if (cardData.page) {
+            return chrome.runtime.getURL(cardData.page);
+        }
+        if (cardData.url && cardData.url !== "#") {
+            return cardData.url;
+        }
+        return "";
+    }
+
+    function getFaviconUrl(pageUrl, size) {
+        if (!pageUrl) return "";
+        try {
+            const faviconUrl = new URL(chrome.runtime.getURL("/_favicon/"));
+            faviconUrl.searchParams.set("pageUrl", pageUrl);
+            faviconUrl.searchParams.set("size", String(size || 64));
+            return faviconUrl.href;
+        } catch (_error) {
+            return "";
+        }
+    }
+
+    function getRandomSvgIconUrl(svgList) {
+        if (!Array.isArray(svgList) || !svgList.length) return "";
+        const randomSvg = svgList[Math.floor(Math.random() * svgList.length)];
+        return chrome.runtime.getURL(randomSvg);
+    }
+
+    function resolveExplicitIconUrl(iconValue) {
+        const trimmedIcon = String(iconValue || "").trim();
+        if (!trimmedIcon) return "";
+        if (trimmedIcon === "favicon" || trimmedIcon === "auto") return "";
+        if (isAbsoluteUrl(trimmedIcon) || isExtensionResourceUrl(trimmedIcon) || trimmedIcon.startsWith("data:")) {
+            return trimmedIcon;
+        }
+        return chrome.runtime.getURL(trimmedIcon);
+    }
+
     function openOrFocusTab(targetUrl) {
         const normalizedTarget = normalizeUrl(targetUrl);
 
@@ -325,8 +371,12 @@ $(document).ready(function () {
 
                 const icon = document.createElement("span");
                 icon.className = "random-icon";
+                const targetUrl = resolveCardTargetUrl(cardData);
                 if (cardData.icon) {
                     icon.setAttribute("data-icon", cardData.icon);
+                }
+                if (targetUrl) {
+                    icon.setAttribute("data-target-url", targetUrl);
                 }
                 entry.appendChild(icon);
 
@@ -360,24 +410,34 @@ $(document).ready(function () {
 
     function applyIcons(svgList) {
         $(".random-icon").each(function () {
-            const fixedIcon = $(this).data("icon");
-            if (fixedIcon) {
-                $(this).html(
-                    '<img src="' +
-                    chrome.runtime.getURL(fixedIcon) +
-                    '" alt="icon" class="random-svg">'
-                );
-                return;
+            const $icon = $(this);
+            const fixedIcon = String($icon.data("icon") || "").trim();
+            const targetUrl = String($icon.data("targetUrl") || "").trim();
+            const fallbackIcon = getRandomSvgIconUrl(svgList);
+
+            let resolvedIcon = resolveExplicitIconUrl(fixedIcon);
+            if (!resolvedIcon) {
+                resolvedIcon = fallbackIcon;
+            }
+            if (!resolvedIcon) return;
+
+            const img = document.createElement("img");
+            img.src = resolvedIcon;
+            img.alt = "icon";
+            img.className = "random-svg";
+
+            if (fallbackIcon && fallbackIcon !== resolvedIcon) {
+                img.addEventListener("error", function handleError() {
+                    if (img.src !== fallbackIcon) {
+                        console.warn("[Lindel Debug] icon load failed, fallback to local icon:", resolvedIcon);
+                        img.src = fallbackIcon;
+                        return;
+                    }
+                    img.removeEventListener("error", handleError);
+                });
             }
 
-            if (!Array.isArray(svgList) || !svgList.length) return;
-
-            const randomSvg = svgList[Math.floor(Math.random() * svgList.length)];
-            $(this).html(
-                '<img src="' +
-                chrome.runtime.getURL(randomSvg) +
-                '" alt="icon" class="random-svg">'
-            );
+            $icon.empty().append(img);
         });
     }
 
