@@ -3,4 +3,5 @@
 /TODO.md
 /dist/
 /build/
-/chrome_ui/.data/
+/browser_extension/.data/
+/.claude/
