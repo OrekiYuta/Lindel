@@ -43,10 +43,10 @@
         "https://chatgpt.com/*"
       ],
       "css": [
-        "assets/css/chatgpt-helper.css"
+        "assets/css/wording-assistant.css"
       ],
       "js": [
-        "assets/js/chatgpt-helper.js"
+        "assets/js/wording-assistant.js"
       ]
     }
   ],
