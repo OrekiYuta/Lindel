@@ -32,14 +32,6 @@
   "content_scripts": [
     {
       "matches": [
-        "https://mops1-ct3.kb.southeastasia.azure.elastic-cloud.com:9243/*"
-      ],
-      "js": [
-        "assets/js/content.js"
-      ]
-    },
-    {
-      "matches": [
         "https://chatgpt.com/*"
       ],
       "css": [
@@ -53,7 +45,6 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "pages/panel.html",
         "assets/config/prompt.yml"
       ],
       "matches": [
