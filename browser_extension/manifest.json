@@ -37,12 +37,24 @@
       "js": [
         "assets/js/content.js"
       ]
+    },
+    {
+      "matches": [
+        "https://chatgpt.com/*"
+      ],
+      "css": [
+        "assets/css/chatgpt-helper.css"
+      ],
+      "js": [
+        "assets/js/chatgpt-helper.js"
+      ]
     }
   ],
   "web_accessible_resources": [
     {
       "resources": [
-        "pages/panel.html"
+        "pages/panel.html",
+        "assets/config/prompt.yml"
       ],
       "matches": [
         "<all_urls>"

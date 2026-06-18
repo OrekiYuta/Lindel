@@ -1,0 +1,2 @@
+translate: "Translate the following text (Chinese to English, or English to Chinese). Output only the translation:"
+refine: "Translate or refine the following text for workplace conversation. If Chinese, translate to English. If English, refine the expression. Requirements: use idiomatic casual wording, keep it simple, suitable for daily work communication. Output only the result:"
