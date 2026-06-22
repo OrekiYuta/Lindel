@@ -2,11 +2,16 @@
   "manifest_version": 3,
   "name": "Lindel",
   "version": "1.0.0",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "lindel@extension",
+      "strict_min_version": "109.0"
+    }
+  },
   "permissions": [
     "tabs",
     "storage",
-    "bookmarks",
-    "favicon"
+    "bookmarks"
   ],
   "host_permissions": [
     "http://*/*",

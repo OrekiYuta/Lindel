@@ -5,3 +5,4 @@
 /build/
 /browser_extension/.data/
 /.claude/
+/browser_extension/dist/
